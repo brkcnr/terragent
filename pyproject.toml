@@ -1,0 +1,85 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "terragent"
+version = "0.1.0"
+description = "Autonomous Terraria agent playing via local WebSocket bridge"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "TerrAgent Team" }
+]
+dependencies = [
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0.0",
+    "websockets>=12.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "ruff>=0.4.0",
+    "mypy>=1.9.0",
+    "types-PyYAML>=6.0.12.20240311",
+]
+
+[project.scripts]
+terragent = "terragent.main:cli_entrypoint"
+
+[tool.setuptools.packages.find]
+where = ["agent"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "D",   # pydocstyle
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+]
+ignore = [
+    "D100", # missing docstring in public module (checked individually, ignore top-level noise)
+    "D104", # missing docstring in public package
+    "D203", # 1 blank line required before class docstring (conflict with D211)
+    "D213", # multi-line docstring summary should start at the second line (conflict with D212)
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = [
+    "websockets.*",
+    "yaml.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+pythonpath = ["agent"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"

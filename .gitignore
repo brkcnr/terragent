@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & Linting
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+.mypy_cache/
+
+# Environment and Secrets (SECURITY: NEVER COMMIT CREDENTIALS)
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# Terraria Save Files & Backups (SECURITY & HYGIENE)
+backups/
+*.wld
+*.twld
+*.plr
+*.tplr
+
+# .NET / C# Build Artifacts
+bin/
+obj/
+*.user
+*.userosset
+*.suo
+*.userprefs
+*.sln.docstates
+[Dd]ebug/
+[Rr]elease/
+*.deps.json
+*.runtimeconfig.json
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db

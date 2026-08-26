@@ -1,0 +1,5 @@
+displayName = TerrAgentBridge
+author = TerrAgent Team
+version = 1.0.0
+homepage = https://github.com/brkcnr/terragent
+side = Both

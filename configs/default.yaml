@@ -1,0 +1,22 @@
+# TerrAgent Default Configuration
+# Milestone 1 Scope: Connection, Protocol, and Reflex Baseline
+
+bridge:
+  host: "127.0.0.1"
+  port: 8765
+  protocol_version: "1.0.0"
+  reconnect_initial_delay_seconds: 1.0
+  reconnect_max_delay_seconds: 10.0
+  reconnect_backoff_factor: 2.0
+  max_reconnect_attempts: 10
+  timeout_seconds: 5.0
+
+reflex:
+  tick_hz: 10.0
+  low_hp_threshold: 100
+  safe_retreat_offset_x: -50.0
+
+safety:
+  max_session_runtime_seconds: 3600
+  emergency_killswitch_key: "F9"
+  pause_resume_key: "F10"
