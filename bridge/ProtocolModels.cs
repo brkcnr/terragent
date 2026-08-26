@@ -58,6 +58,57 @@ public class InventorySlotModel
 }
 
 /// <summary>
+/// Represents an active buff on the player.
+/// </summary>
+public class BuffStateModel
+{
+    [JsonPropertyName("buff_id")]
+    public int BuffId { get; set; }
+
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [JsonPropertyName("duration_seconds")]
+    public double DurationSeconds { get; set; }
+}
+
+/// <summary>
+/// Represents a hostile enemy or boss.
+/// </summary>
+public class NearbyEnemyModel
+{
+    [JsonPropertyName("enemy_id")]
+    public int EnemyId { get; set; }
+
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [JsonPropertyName("hp")]
+    public int Hp { get; set; }
+
+    [JsonPropertyName("max_hp")]
+    public int MaxHp { get; set; }
+
+    [JsonPropertyName("x")]
+    public float X { get; set; }
+
+    [JsonPropertyName("y")]
+    public float Y { get; set; }
+
+    [JsonPropertyName("velocity_x")]
+    public float VelocityX { get; set; }
+
+    [JsonPropertyName("velocity_y")]
+    public float VelocityY { get; set; }
+
+    [JsonPropertyName("distance")]
+    public float Distance { get; set; }
+
+    [JsonPropertyName("is_boss")]
+    public bool IsBoss { get; set; }
+}
+
+/// <summary>
 /// Represents a Town NPC status in the roster.
 /// </summary>
 public class TownNPCModel
@@ -86,6 +137,9 @@ public class PlayerStateModel
     [JsonPropertyName("max_hp")]
     public int MaxHp { get; set; }
 
+    [JsonPropertyName("defense")]
+    public int Defense { get; set; }
+
     [JsonPropertyName("x")]
     public float X { get; set; }
 
@@ -97,6 +151,9 @@ public class PlayerStateModel
 
     [JsonPropertyName("inventory")]
     public List<InventorySlotModel> Inventory { get; set; } = new();
+
+    [JsonPropertyName("buffs")]
+    public List<BuffStateModel> Buffs { get; set; } = new();
 }
 
 /// <summary>
@@ -118,6 +175,9 @@ public class GameStateModel
 
     [JsonPropertyName("town_npcs")]
     public List<TownNPCModel> TownNpcs { get; set; } = new();
+
+    [JsonPropertyName("nearby_enemies")]
+    public List<NearbyEnemyModel> NearbyEnemies { get; set; } = new();
 
     [JsonPropertyName("spawn_tile_x")]
     public int? SpawnTileX { get; set; }
@@ -148,6 +208,51 @@ public class MoveCommandModel
 
     [JsonPropertyName("duration_ms")]
     public int DurationMs { get; set; }
+}
+
+/// <summary>
+/// Attack action command received from client.
+/// </summary>
+public class AttackCommandModel
+{
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = "action";
+
+    [JsonPropertyName("command_id")]
+    public string CommandId { get; set; } = string.Empty;
+
+    [JsonPropertyName("action")]
+    public string Action { get; set; } = "attack";
+
+    [JsonPropertyName("aim_x")]
+    public float AimX { get; set; }
+
+    [JsonPropertyName("aim_y")]
+    public float AimY { get; set; }
+
+    [JsonPropertyName("use_item_slot")]
+    public int UseItemSlot { get; set; }
+
+    [JsonPropertyName("continuous")]
+    public bool Continuous { get; set; }
+}
+
+/// <summary>
+/// Use potion command received from client.
+/// </summary>
+public class UsePotionCommandModel
+{
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = "action";
+
+    [JsonPropertyName("command_id")]
+    public string CommandId { get; set; } = string.Empty;
+
+    [JsonPropertyName("action")]
+    public string Action { get; set; } = "use_potion";
+
+    [JsonPropertyName("potion_type")]
+    public string PotionType { get; set; } = "healing";
 }
 
 /// <summary>

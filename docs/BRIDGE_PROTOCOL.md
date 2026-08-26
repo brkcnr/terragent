@@ -104,6 +104,29 @@ Requests movement toward target world coordinates:
 }
 ```
 
+### Attack Command (`attack`)
+```json
+{
+  "type": "action",
+  "command_id": "cmd_01J6ATK1",
+  "action": "attack",
+  "aim_x": 2650.0,
+  "aim_y": 1150.0,
+  "use_item_slot": 0,
+  "continuous": true
+}
+```
+
+### Use Potion Command (`use_potion`)
+```json
+{
+  "type": "action",
+  "command_id": "cmd_01J6POT1",
+  "action": "use_potion",
+  "potion_type": "healing"
+}
+```
+
 ### Set Spawn Command (`set_spawn`)
 ```json
 {

@@ -1,8 +1,8 @@
-"""Pydantic schemas for the TerrAgent bridge protocol (Milestone 2 Scope).
+"""Pydantic schemas for the TerrAgent bridge protocol (Milestones 1, 2 & 3).
 
 This module defines strongly typed models for WebSocket communication between
 the Python agent and the C# tModLoader bridge mod, covering player state,
-NPC roster, housing validation queries, categorized chest storage, and tile commands.
+enemies, buffs, combat actions, potion consumption, and queries.
 """
 
 import uuid
@@ -64,6 +64,29 @@ class InventorySlot(BaseModel):
     stack: int = Field(ge=0, default=0, description="Stack count")
 
 
+class BuffState(BaseModel):
+    """Represents an active buff or debuff affecting the player."""
+
+    buff_id: int = Field(description="Terraria internal buff type ID")
+    name: str = Field(description="Display name of the buff (e.g. 'Ironskin')")
+    duration_seconds: float = Field(ge=0.0, description="Remaining duration in seconds")
+
+
+class NearbyEnemy(BaseModel):
+    """Represents a hostile NPC or boss within scanner radius."""
+
+    enemy_id: int = Field(description="Terraria NPC slot index / ID")
+    name: str = Field(description="Enemy name")
+    hp: int = Field(description="Current enemy health")
+    max_hp: int = Field(ge=1, description="Max enemy health")
+    x: float = Field(description="World position X in pixels")
+    y: float = Field(description="World position Y in pixels")
+    velocity_x: float = Field(default=0.0, description="Movement velocity X")
+    velocity_y: float = Field(default=0.0, description="Movement velocity Y")
+    distance: float = Field(default=0.0, ge=0.0, description="Distance from player in pixels")
+    is_boss: bool = Field(default=False, description="Whether this entity is a boss")
+
+
 class TownNPC(BaseModel):
     """Represents a Town NPC status in the roster."""
 
@@ -78,12 +101,17 @@ class PlayerState(BaseModel):
 
     hp: int = Field(description="Current health points")
     max_hp: int = Field(ge=1, description="Maximum health points")
+    defense: int = Field(default=0, ge=0, description="Player defense rating")
     x: float = Field(description="World X coordinate in pixels")
     y: float = Field(description="World Y coordinate in pixels")
     selected_slot: int = Field(ge=0, le=49, default=0, description="Selected hotbar slot")
     inventory: list[InventorySlot] = Field(
         default_factory=list,
         description="Player inventory slots",
+    )
+    buffs: list[BuffState] = Field(
+        default_factory=list,
+        description="Active player buffs",
     )
 
 
@@ -97,6 +125,10 @@ class GameState(BaseModel):
     town_npcs: list[TownNPC] = Field(
         default_factory=list,
         description="Town NPC roster status",
+    )
+    nearby_enemies: list[NearbyEnemy] = Field(
+        default_factory=list,
+        description="Hostile entities currently detected around player",
     )
     spawn_tile_x: int | None = Field(default=None, description="Bed spawn tile X if set")
     spawn_tile_y: int | None = Field(default=None, description="Bed spawn tile Y if set")
@@ -128,6 +160,26 @@ class MoveCommand(BaseActionCommand):
         ge=1,
         le=5000,
         description="Duration in milliseconds to apply movement input",
+    )
+
+
+class AttackCommand(BaseActionCommand):
+    """Command requesting weapon usage directed at specific aim coordinates."""
+
+    action: Literal["attack"] = "attack"
+    aim_x: float = Field(description="Target aim coordinate X in world space")
+    aim_y: float = Field(description="Target aim coordinate Y in world space")
+    use_item_slot: int = Field(default=0, ge=0, le=49, description="Inventory hotbar slot to use")
+    continuous: bool = Field(default=True, description="Whether to sustain continuous attack input")
+
+
+class UsePotionCommand(BaseActionCommand):
+    """Command requesting potion consumption (healing, mana, or buff)."""
+
+    action: Literal["use_potion"] = "use_potion"
+    potion_type: Literal["healing", "mana", "buff"] = Field(
+        default="healing",
+        description="Type of potion to consume",
     )
 
 
@@ -186,13 +238,15 @@ class BuildStructureCommand(BaseActionCommand):
     """Command requesting programmatic construction of a template structure."""
 
     action: Literal["build_structure"] = "build_structure"
-    template_name: str = Field(description="Structure template identifier (e.g. 'npc_room_10x6')")
+    template_name: str = Field(description="Structure template identifier")
     origin_x: int = Field(description="Anchor origin tile coordinate X")
     origin_y: int = Field(description="Anchor origin tile coordinate Y")
 
 
 ActionCommand = Annotated[
     MoveCommand
+    | AttackCommand
+    | UsePotionCommand
     | PlaceTileCommand
     | BreakTileCommand
     | SetSpawnCommand

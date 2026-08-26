@@ -1,0 +1,153 @@
+# TerrAgent Data-Driven Boss Combat Strategies
+# Milestone 3 Scope: Pre-Hardmode Boss Progression
+
+eye_of_cthulhu:
+  boss_id: "eye_of_cthulhu"
+  display_name: "Eye of Cthulhu"
+  max_attempts: 3
+  summon_item:
+    name: "Suspicious Looking Eye"
+    item_id: 43
+    crafting_recipe:
+      altar: "demon_or_crimson_altar"
+      materials:
+        - item_name: "Lens"
+          item_id: 68
+          quantity: 6
+  readiness_criteria:
+    min_hp: 200
+    min_defense: 10
+    min_housed_npcs: 3
+    recommended_armor: "gold_or_platinum"
+    recommended_weapons:
+      - "Gold Bow"
+      - "Platinum Bow"
+      - "Minishark"
+    required_ammo:
+      name: "Jester's Arrow"
+      item_id: 51
+      min_quantity: 200
+    required_buffs:
+      - "Ironskin"
+      - "Regeneration"
+      - "Swiftness"
+      - "Well Fed"
+  arena:
+    layers: 3
+    platform_length: 100
+    layer_spacing: 6
+    campfire_spacing: 40
+    heart_lantern_spacing: 40
+    sunflower_spacing: 50
+  combat_patterns:
+    phase_1:
+      trigger_hp_percent: 100
+      pattern: "circle_kite"
+      ideal_distance_px: 250.0
+      target_priority: "servants_then_boss"
+    phase_2:
+      trigger_hp_percent: 50
+      pattern: "horizontal_run"
+      ideal_distance_px: 350.0
+      dodge_speed_boost: true
+      turnaround_on_charge: true
+    heal_hp_threshold_percent: 45
+
+eater_of_worlds:
+  boss_id: "eater_of_worlds"
+  display_name: "Eater of Worlds"
+  world_evil: "corruption"
+  max_attempts: 3
+  summon_item:
+    name: "Worm Food"
+    item_id: 70
+    crafting_recipe:
+      altar: "demon_altar"
+      materials:
+        - item_name: "Vile Powder"
+          item_id: 67
+          quantity: 30
+        - item_name: "Rotten Chunk"
+          item_id: 68
+          quantity: 15
+  readiness_criteria:
+    min_hp: 200
+    min_defense: 12
+    recommended_weapons:
+      - "Vilethorn"
+      - "Ball O' Hurt"
+      - "Grenade"
+      - "Gold Bow"
+    required_ammo:
+      name: "Jester's Arrow"
+      item_id: 51
+      min_quantity: 300
+    required_buffs:
+      - "Ironskin"
+      - "Regeneration"
+      - "Swiftness"
+  arena:
+    layers: 4
+    platform_length: 80
+    layer_spacing: 5
+    campfire_spacing: 30
+    heart_lantern_spacing: 30
+    sunflower_spacing: 40
+  combat_patterns:
+    phase_1:
+      pattern: "horizontal_run"
+      piercing_attack: true
+      avoid_head_collision: true
+      ideal_distance_px: 200.0
+    heal_hp_threshold_percent: 50
+
+brain_of_cthulhu:
+  boss_id: "brain_of_cthulhu"
+  display_name: "Brain of Cthulhu"
+  world_evil: "crimson"
+  max_attempts: 3
+  summon_item:
+    name: "Bloody Spine"
+    item_id: 1331
+    crafting_recipe:
+      altar: "crimson_altar"
+      materials:
+        - item_name: "Vicious Powder"
+          item_id: 1330
+          quantity: 30
+        - item_name: "Vertebra"
+          item_id: 1332
+          quantity: 15
+  readiness_criteria:
+    min_hp: 200
+    min_defense: 12
+    recommended_weapons:
+      - "The Rotted Fork"
+      - "Gold Bow"
+      - "Grenade"
+    required_ammo:
+      name: "Jester's Arrow"
+      item_id: 51
+      min_quantity: 300
+    required_buffs:
+      - "Ironskin"
+      - "Regeneration"
+      - "Swiftness"
+  arena:
+    layers: 3
+    platform_length: 80
+    layer_spacing: 6
+    campfire_spacing: 30
+    heart_lantern_spacing: 30
+    sunflower_spacing: 40
+  combat_patterns:
+    phase_1:
+      pattern: "circle_kite"
+      target_priority: "creepers"
+      ideal_distance_px: 220.0
+    phase_2:
+      pattern: "horizontal_run"
+      target_priority: "real_brain"
+      knockback_lock: true
+      ideal_distance_px: 180.0
+    heal_hp_threshold_percent: 50

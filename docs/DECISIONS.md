@@ -63,3 +63,27 @@
 - **Context**: In-game housing validity involves complex game rules (corruption proximity, tile integrity, lighting, solid surfaces). Client-side guessing leads to desync.
 - **Decision**: Expose programmatic query endpoints (`query_housing`, `query_chest`) on the bridge WebSocket. The agent queries the bridge and verifies validity with the game engine before marking a room as valid or assigning NPCs.
 - **Consequences**: 100% accurate housing verification conforming to Terraria's native engine checks.
+
+---
+
+## ADR 009: Data-Driven Boss Combat Strategies via YAML Configuration
+- **Status**: Accepted (2026-08-26)
+- **Context**: Hardcoding boss fight logic in Python code makes extending and tuning boss mechanics rigid and error-prone across different world evils (Corruption vs. Crimson).
+- **Decision**: Store all boss requirements, arena specifications, phase triggers, required potions, and reflex movement patterns in `configs/boss_strategies.yaml`.
+- **Consequences**: Easy strategy tuning, clear separation of declarative boss parameters from combat execution algorithms.
+
+---
+
+## ADR 010: Vector-Based Deterministic Kiting and Target Aim in Reflex Combat
+- **Status**: Accepted (2026-08-26)
+- **Context**: Boss combat requires instantaneous dodging, lead aiming, and continuous repositioning at 60 FPS without network or LLM latency.
+- **Decision**: Implement vector-based movement controllers (`circle_kite`, `horizontal_run`) in the zero-LLM reflex layer. Aim angles lead enemy velocity vectors deterministically.
+- **Consequences**: Sub-millisecond combat decisions capable of defeating fast-moving bosses unattended.
+
+---
+
+## ADR 011: SQLite-Backed Postmortem Analysis for Boss Retries
+- **Status**: Accepted (2026-08-26)
+- **Context**: If a boss fight fails, the agent needs to analyze the cause of death (low damage, inadequate arena length, missing buffs) before retrying, capped at ≤3 attempts before review.
+- **Decision**: Persist structured attempt logs in a `boss_attempts` SQLite table and feed past attempt metrics into subsequent attempt planning.
+- **Consequences**: Prevents infinite death loops and ensures systematic recovery from combat failures.

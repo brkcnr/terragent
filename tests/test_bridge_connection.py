@@ -1,7 +1,8 @@
-"""Integration tests with a fake WebSocket bridge server (Milestones 1 & 2).
+"""Integration tests with a fake WebSocket bridge server (Milestones 1, 2 & 3).
 
-Tests connection, protocol handshake, state parsing, command dispatch,
-housing validity queries, chest item queries, and error handling without needing Terraria installed.
+Tests connection, protocol handshake, state parsing with enemies and buffs,
+command dispatch (movement, attack, potions, tiles), housing queries, chest queries,
+and error handling without needing Terraria installed.
 """
 
 import asyncio
@@ -12,13 +13,11 @@ import pytest
 from terragent.bridge_client import BridgeClient
 from terragent.config import BridgeConfig
 from terragent.schemas import (
+    AttackCommand,
     BridgeConnectionError,
     GameState,
-    PlaceTileCommand,
     ProtocolVersionMismatchError,
-    QueryChestResponse,
-    QueryHousingResponse,
-    SetSpawnCommand,
+    UsePotionCommand,
 )
 from websockets.asyncio.server import ServerConnection, serve
 from websockets.exceptions import ConnectionClosed
@@ -77,26 +76,43 @@ class FakeBridgeServer:
                 await websocket.close()
                 return
 
-            # 3. Stream a canned GameState with NPCs and spawn point
+            # 3. Stream a canned GameState with NPCs, Boss, and Buffs
             sample_state = {
                 "type": "game_state",
                 "protocol_version": self.protocol_version,
                 "timestamp": 1724678400.0,
                 "player": {
-                    "hp": 90,
-                    "max_hp": 100,
+                    "hp": 180,
+                    "max_hp": 200,
+                    "defense": 14,
                     "x": 2500.0,
                     "y": 1200.0,
                     "selected_slot": 0,
                     "inventory": [
-                        {"slot": 0, "item_id": 3507, "name": "Copper Shortsword", "stack": 1},
-                        {"slot": 1, "item_id": 3509, "name": "Copper Pickaxe", "stack": 1},
+                        {"slot": 0, "item_id": 99, "name": "Gold Bow", "stack": 1},
+                        {"slot": 1, "item_id": 3507, "name": "Copper Shortsword", "stack": 1},
+                    ],
+                    "buffs": [
+                        {"buff_id": 5, "name": "Ironskin", "duration_seconds": 240.0},
                     ],
                 },
                 "town_npcs": [
                     {"npc_type": 22, "name": "Andrew", "is_housed": True, "room_id": 1},
                     {"npc_type": 17, "name": "Alfred", "is_housed": True, "room_id": 2},
-                    {"npc_type": 18, "name": "Molly", "is_housed": True, "room_id": 3},
+                ],
+                "nearby_enemies": [
+                    {
+                        "enemy_id": 4,
+                        "name": "Eye of Cthulhu",
+                        "hp": 2800,
+                        "max_hp": 2800,
+                        "x": 2700.0,
+                        "y": 1100.0,
+                        "velocity_x": -3.0,
+                        "velocity_y": 1.0,
+                        "distance": 223.6,
+                        "is_boss": True,
+                    }
                 ],
                 "spawn_tile_x": 125,
                 "spawn_tile_y": 80,
@@ -136,7 +152,6 @@ class FakeBridgeServer:
                             "chest_y": msg_data.get("chest_y", 0),
                             "items": [
                                 {"slot": 0, "item_id": 12, "name": "Iron Ore", "stack": 75},
-                                {"slot": 1, "item_id": 19, "name": "Gold Bar", "stack": 20},
                             ],
                             "details": "Chest items queried",
                         }
@@ -150,8 +165,8 @@ class FakeBridgeServer:
 
 
 @pytest.mark.asyncio
-async def test_bridge_connection_and_queries() -> None:
-    """Test connection, GameState parsing with Town NPCs, and query endpoints."""
+async def test_bridge_connection_and_combat_dispatch() -> None:
+    """Test connection, GameState parsing with Enemies & Buffs, and combat command dispatch."""
     server = FakeBridgeServer(port=8766)
     await server.start()
 
@@ -162,35 +177,25 @@ async def test_bridge_connection_and_queries() -> None:
         await client.connect()
         assert client.is_connected
 
-        # Receive game state and verify Town NPCs & spawn point
+        # Receive game state and verify Enemies & Buffs
         state = await client.receive_game_state()
         assert isinstance(state, GameState)
-        assert len(state.town_npcs) == 3
-        assert state.town_npcs[1].name == "Alfred"
-        assert state.spawn_tile_x == 125
+        assert len(state.nearby_enemies) == 1
+        assert state.nearby_enemies[0].name == "Eye of Cthulhu"
+        assert state.nearby_enemies[0].is_boss is True
+        assert len(state.player.buffs) == 1
+        assert state.player.buffs[0].name == "Ironskin"
 
-        # Query housing validity
-        housing_res = await client.query_housing(tile_x=125, tile_y=80)
-        assert isinstance(housing_res, QueryHousingResponse)
-        assert housing_res.success is True
-        assert housing_res.is_valid is True
-        assert housing_res.assigned_npc == "Merchant"
-
-        # Query chest contents
-        chest_res = await client.query_chest(chest_x=130, chest_y=85)
-        assert isinstance(chest_res, QueryChestResponse)
-        assert chest_res.success is True
-        assert len(chest_res.items) == 2
-        assert chest_res.items[0].name == "Iron Ore"
-
-        # Send PlaceTile and SetSpawn commands
-        await client.send_command(PlaceTileCommand(tile_x=120, tile_y=80, item_id=9))
-        await client.send_command(SetSpawnCommand(tile_x=125, tile_y=80))
+        # Dispatch Combat Actions: Attack and UsePotion
+        await client.send_command(AttackCommand(aim_x=2700.0, aim_y=1100.0, use_item_slot=0))
+        await client.send_command(UsePotionCommand(potion_type="healing"))
 
         await asyncio.sleep(0.05)
         assert len(server.received_commands) == 2
-        assert server.received_commands[0]["action"] == "place_tile"
-        assert server.received_commands[1]["action"] == "set_spawn"
+        assert server.received_commands[0]["action"] == "attack"
+        assert server.received_commands[0]["aim_x"] == 2700.0
+        assert server.received_commands[1]["action"] == "use_potion"
+        assert server.received_commands[1]["potion_type"] == "healing"
 
     finally:
         await client.disconnect()

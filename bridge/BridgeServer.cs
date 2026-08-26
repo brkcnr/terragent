@@ -182,18 +182,24 @@ public class BridgeServer : IDisposable
                 Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0,
                 Player = new PlayerStateModel
                 {
-                    Hp = 100,
-                    MaxHp = 100,
+                    Hp = 200,
+                    MaxHp = 200,
+                    Defense = 14,
                     X = 2500.0f,
                     Y = 1200.0f,
                     SelectedSlot = 0,
                     Inventory = new()
                     {
-                        new InventorySlotModel { Slot = 0, ItemId = 3507, Name = "Copper Shortsword", Stack = 1 },
-                        new InventorySlotModel { Slot = 1, ItemId = 3509, Name = "Copper Pickaxe", Stack = 1 },
-                        new InventorySlotModel { Slot = 2, ItemId = 3506, Name = "Copper Axe", Stack = 1 },
-                        new InventorySlotModel { Slot = 3, ItemId = 0, Name = "", Stack = 0 },
-                        new InventorySlotModel { Slot = 4, ItemId = 0, Name = "", Stack = 0 }
+                        new InventorySlotModel { Slot = 0, ItemId = 99, Name = "Gold Bow", Stack = 1 },
+                        new InventorySlotModel { Slot = 1, ItemId = 3507, Name = "Copper Shortsword", Stack = 1 },
+                        new InventorySlotModel { Slot = 2, ItemId = 3509, Name = "Copper Pickaxe", Stack = 1 },
+                        new InventorySlotModel { Slot = 3, ItemId = 51, Name = "Jester's Arrow", Stack = 250 },
+                        new InventorySlotModel { Slot = 4, ItemId = 188, Name = "Healing Potion", Stack = 15 }
+                    },
+                    Buffs = new()
+                    {
+                        new BuffStateModel { BuffId = 5, Name = "Ironskin", DurationSeconds = 300.0 },
+                        new BuffStateModel { BuffId = 2, Name = "Regeneration", DurationSeconds = 300.0 }
                     }
                 },
                 TownNpcs = new()
@@ -202,6 +208,22 @@ public class BridgeServer : IDisposable
                     new TownNPCModel { NpcType = 17, Name = "Alfred", IsHoused = true, RoomId = 2 },
                     new TownNPCModel { NpcType = 18, Name = "Molly", IsHoused = true, RoomId = 3 },
                     new TownNPCModel { NpcType = 19, Name = "Bartholomew", IsHoused = true, RoomId = 4 }
+                },
+                NearbyEnemies = new()
+                {
+                    new NearbyEnemyModel
+                    {
+                        EnemyId = 4,
+                        Name = "Eye of Cthulhu",
+                        Hp = 2800,
+                        MaxHp = 2800,
+                        X = 2750.0f,
+                        Y = 1000.0f,
+                        VelocityX = -4.0f,
+                        VelocityY = 2.0f,
+                        Distance = 320.0f,
+                        IsBoss = true
+                    }
                 },
                 SpawnTileX = 125,
                 SpawnTileY = 80

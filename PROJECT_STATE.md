@@ -1,8 +1,8 @@
 # TerrAgent Project State
 
 **Last Updated**: 2026-08-26  
-**Current Milestone**: M2 (Base & NPCs) — Completed  
-**Status**: Milestone 2 Complete, Ready for M3  
+**Current Milestone**: M3 (Pre-hardmode Combat) — Completed  
+**Status**: Milestone 3 Complete, Ready for M4  
 
 ---
 
@@ -10,7 +10,7 @@
 
 TerrAgent is an autonomous Terraria AI agent engineered for zero-cost, local execution on Windows PC using a decoupled architecture:
 1. Native C# tModLoader Bridge (`TerrAgentBridge`) running at game tick rate on WebSocket `ws://127.0.0.1:8765`.
-2. Python Agent (`terragent`) running a zero-LLM reflex layer with strict Pydantic protocol schemas, persistent SQLite memory, parameterized building templates, and categorized chest storage.
+2. Python Agent (`terragent`) running a zero-LLM reflex combat engine with lead aiming, vector-based kiting controllers, multi-tiered arena generation, persistent SQLite memory, and postmortem failure analysis.
 
 ---
 
@@ -31,8 +31,13 @@ TerrAgent is an autonomous Terraria AI agent engineered for zero-cost, local exe
   - 8-category canonical chest storage engine and deposit/withdrawal routines (`agent/terragent/storage.py`)
   - Bed placement and spawn point setting actions (`SetSpawnCommand`)
   - Complete unit and integration test suite passing without Terraria installed (29/29 tests green)
-- [ ] **M3: Pre-hardmode Combat** (Pending review)
-- [ ] **M4: Hardmode Transition**
+- [x] **M3: Pre-hardmode Combat (Completed)**
+  - Data-driven boss strategies configuration (`configs/boss_strategies.yaml`) covering Eye of Cthulhu, Eater of Worlds, and Brain of Cthulhu
+  - Multi-tiered platform arena generator with campfires, heart lanterns, and sunflowers (`agent/terragent/arena.py`)
+  - Deterministic reflex combat engine with circle kiting, horizontal platform sprinting, predictive lead aiming, weapon switching, and auto-potion healing (`agent/terragent/combat.py`)
+  - SQLite-backed postmortem failure analysis and attempt limiter (`agent/terragent/postmortem.py`)
+  - Full unit and fake bridge test suite (38/38 tests passing green)
+- [ ] **M4: Hardmode Transition** (Pending review)
 - [ ] **M5: Mechanical Bosses**
 - [ ] **M6: Endgame & Moon Lord**
 
@@ -40,21 +45,20 @@ TerrAgent is an autonomous Terraria AI agent engineered for zero-cost, local exe
 
 ## 3. Current Architecture & Boundaries
 
-- **Network**: Localhost WebSocket only (`ws://127.0.0.1:8765`). Protocol version strictly checked on handshake. Request-response queries for housing and chest verification.
-- **Persistence**: Relational SQLite storage (`MemoryStore`) for rooms, town NPCs, chests, and spawn point.
-- **Templates**: Grid-relative parameterized templates (`StructureTemplate`, `create_standard_npc_room`, `create_player_bedroom`).
-- **Storage**: 8 canonical categories (`ores_bars`, `blocks_walls`, `weapons_tools`, `accessories_armor`, `potions_consumables`, `seeds_plants`, `boss_summons_trophies`, `misc`) with automated deposit planning protecting hotbar slots.
-- **Testing**: 100% testable without Terraria installed via fake bridge mock server (29 tests passing).
+- **Combat Engine**: Sub-millisecond vector math calculations (`circle_kite`, `horizontal_run`, `calculate_lead_aim`), weapon slot switching, and potion management.
+- **Arena Builder**: Multi-level wooden platform generator with life regeneration auras (Campfires, Heart Lanterns) and movement speed boosts (Sunflowers).
+- **Strategies**: Declarative YAML configuration (`configs/boss_strategies.yaml`) specifying phase triggers, gear minimums, and combat patterns.
+- **Postmortem**: Historical battle logging and failure diagnostics (`PostmortemManager`) to adapt combat strategies between attempts.
+- **Testing**: 100% testable without Terraria installed via fake bridge mock server (38 tests passing).
 
 ---
 
 ## 4. Known Issues & Technical Debt
 
-- None currently identified for M1/M2 scope.
+- None currently identified for M1/M2/M3 scope.
 
 ---
 
 ## 5. Next Priority
 
-- Await user review and approval of M2.
-- Proceed to Milestone 3 (Pre-hardmode combat: arena building, Eye of Cthulhu and evil boss automated combat behaviors, summon farming, and postmortems).
+- Proceed to Milestone 4 (Hardmode Transition: Skeletron defeat, Dungeon loot acquisition, Underworld hellstone tier, hellbridge construction, and Wall of Flesh battle).
