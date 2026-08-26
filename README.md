@@ -1,4 +1,4 @@
-# TerrAgent 🎮🤖
+# TerrAgent
 
 [![CI](https://github.com/brkcnr/terragent/actions/workflows/ci.yml/badge.svg)](https://github.com/brkcnr/terragent/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
@@ -11,7 +11,7 @@ Designed with a decoupled, high-performance architecture, TerrAgent runs at zero
 
 ---
 
-## 🌟 Key Architecture
+## Key Architecture
 
 - **Zero-Latency Reflex Execution**: Native 60 FPS in-game response without waiting for network or LLM round-trips.
 - **tModLoader WebSocket Bridge**: A C# mod broadcasting game state and executing action commands on `ws://127.0.0.1:8765`.
@@ -28,7 +28,7 @@ TerrAgent (Python: Reflex Engine + Action API)
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Installation
 
@@ -61,7 +61,7 @@ mypy agent tests
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 terragent/
@@ -78,7 +78,7 @@ terragent/
 
 ---
 
-## 📖 Documentation
+## Documentation
 
 - [Setup Guide](docs/SETUP.md)
 - [Architecture Overview](docs/ARCHITECTURE.md)
