@@ -2,11 +2,11 @@
 
 This package provides the core client, reflex execution loop, combat engine,
 arena builder, hellbridge builder, dungeon manager, hardmode manager,
-altar manager, wings manager, housing manager, categorized storage,
+altar manager, wings manager, endgame manager, housing manager, categorized storage,
 postmortem analysis, and schemas for communicating with the TerrAgentBridge mod.
 """
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 __protocol_version__ = "1.0.0"
 
 from terragent.altar import AltarManager, HardmodeOreTier
@@ -15,6 +15,7 @@ from terragent.bridge_client import BridgeClient
 from terragent.combat import CombatEngine, calculate_circle_kite_target, calculate_lead_aim
 from terragent.config import BridgeConfig, ReflexConfig, TerrAgentConfig, load_config
 from terragent.dungeon import DungeonManager
+from terragent.endgame import CANONICAL_PILLARS, EndgameManager, EndgameStatus
 from terragent.hardmode import HardmodeManager, HardmodeStatus
 from terragent.hellbridge import HellbridgeBuilder, HellbridgeSpec
 from terragent.housing import (
@@ -67,10 +68,13 @@ __all__ = [
     "BridgeConfig",
     "BuffState",
     "BuildStructureCommand",
+    "CANONICAL_PILLARS",
     "ChestItemSlot",
     "CombatEngine",
     "DepositChestCommand",
     "DungeonManager",
+    "EndgameManager",
+    "EndgameStatus",
     "GameState",
     "HandshakeRequest",
     "HandshakeResponse",

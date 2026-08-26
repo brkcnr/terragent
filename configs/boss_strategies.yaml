@@ -386,3 +386,180 @@ skeletron_prime:
       turnaround_on_spin: true
       ideal_distance_px: 400.0
     heal_hp_threshold_percent: 45
+
+plantera:
+  boss_id: "plantera"
+  display_name: "Plantera"
+  max_attempts: 3
+  summon_method: "break_plantera_bulb_in_underground_jungle"
+  readiness_criteria:
+    min_hp: 450
+    min_defense: 55
+    has_wings: true
+    recommended_armor: "chlorophyte_or_turtle"
+    recommended_weapons:
+      - "Megashark"
+      - "Terra Blade"
+      - "Death Sickle"
+    required_ammo:
+      name: "Chlorophyte Bullet"
+      item_id: 1179
+      min_quantity: 1200
+    required_buffs:
+      - "Ironskin"
+      - "Regeneration"
+      - "Swiftness"
+      - "Endurance"
+  arena:
+    type: "excavated_jungle_box"
+    width_tiles: 100
+    height_tiles: 100
+    remove_background_walls: true
+    campfire_spacing: 30
+    heart_lantern_spacing: 30
+  combat_patterns:
+    phase_1:
+      pattern: "circle_kite"
+      target_priority: "plantera_body"
+      avoid_spiky_balls: true
+      ideal_distance_px: 280.0
+    phase_2:
+      pattern: "horizontal_run"
+      target_priority: "tentacles_then_body"
+      wide_orbit_kiting: true
+      ideal_distance_px: 350.0
+    heal_hp_threshold_percent: 50
+
+golem:
+  boss_id: "golem"
+  display_name: "Golem"
+  max_attempts: 3
+  summon_item:
+    name: "Lihzahrd Power Cell"
+    item_id: 1293
+    summon_method: "use_on_lihzahrd_altar"
+  readiness_criteria:
+    min_hp: 500
+    min_defense: 60
+    has_wings: true
+    recommended_armor: "beetle_or_spectre"
+    recommended_weapons:
+      - "Terra Blade"
+      - "Eye of Cthulhu"
+      - "Chain Gun"
+    required_buffs:
+      - "Ironskin"
+      - "Regeneration"
+      - "Swiftness"
+  arena:
+    type: "temple_chamber"
+    platform_tiers: 2
+    platform_length: 60
+    campfire_spacing: 20
+    heart_lantern_spacing: 20
+  combat_patterns:
+    phase_1:
+      pattern: "circle_kite"
+      target_priority: "golem_fists_then_head"
+      ideal_distance_px: 250.0
+    phase_2:
+      pattern: "horizontal_run"
+      target_priority: "golem_body"
+      dodge_detached_head_lasers: true
+      ideal_distance_px: 300.0
+    heal_hp_threshold_percent: 50
+
+lunatic_cultist:
+  boss_id: "lunatic_cultist"
+  display_name: "Lunatic Cultist"
+  max_attempts: 3
+  summon_method: "slay_dungeon_cultists"
+  readiness_criteria:
+    min_hp: 500
+    min_defense: 65
+    has_wings: true
+    recommended_armor: "beetle_or_spectre"
+    recommended_weapons:
+      - "Possessed Hatchet"
+      - "Razorpine"
+      - "Influx Waver"
+    required_buffs:
+      - "Ironskin"
+      - "Regeneration"
+      - "Swiftness"
+      - "Lifeforce"
+  arena:
+    layers: 3
+    platform_length: 120
+    layer_spacing: 6
+    campfire_spacing: 40
+    heart_lantern_spacing: 40
+  combat_patterns:
+    phase_1:
+      pattern: "circle_kite"
+      target_priority: "real_cultist_no_duplicates"
+      ideal_distance_px: 300.0
+    heal_hp_threshold_percent: 50
+
+celestial_pillars:
+  solar_pillar:
+    shield_kill_quota: 100
+    stay_grounded: true
+    avoid_crawltipede_air: true
+    recommended_weapons: ["Vortex Beater", "Terra Blade"]
+  vortex_pillar:
+    shield_kill_quota: 100
+    recommended_weapons: ["Vortex Beater", "Chlorophyte Bullets"]
+  nebula_pillar:
+    shield_kill_quota: 100
+    dodge_nebula_lasers: true
+    recommended_weapons: ["Possessed Hatchet", "Razorpine"]
+  stardust_pillar:
+    shield_kill_quota: 100
+    focus_starcells: true
+    recommended_weapons: ["Terra Blade", "Chain Gun"]
+
+moon_lord:
+  boss_id: "moon_lord"
+  display_name: "Moon Lord"
+  max_attempts: 3
+  summon_method: "destroy_four_celestial_pillars_or_celestial_sigil"
+  readiness_criteria:
+    min_hp: 500
+    min_defense: 70
+    has_wings: true
+    recommended_armor: "solar_or_vortex_or_nebula"
+    recommended_weapons:
+      - "Solar Eruption"
+      - "Vortex Beater"
+      - "Phantasm"
+      - "Nebula Blaze"
+    required_ammo:
+      name: "Chlorophyte Bullet"
+      item_id: 1179
+      min_quantity: 2000
+    required_buffs:
+      - "Ironskin"
+      - "Regeneration"
+      - "Swiftness"
+      - "Lifeforce"
+      - "Endurance"
+      - "Wrath"
+  arena:
+    type: "long_asphalt_skyway_with_overhead_roof"
+    platform_length: 1800
+    solid_roof_interval: 100
+    campfire_spacing: 60
+    heart_lantern_spacing: 60
+  combat_patterns:
+    phase_1:
+      pattern: "horizontal_run"
+      target_priority: "balanced_hands_and_forehead"
+      dodge_phantasmal_deathray: "hide_under_roof_or_fly_over_forehead"
+      ideal_distance_px: 450.0
+    phase_2:
+      pattern: "horizontal_run"
+      target_priority: "moon_lord_core"
+      dodge_true_eyes_phantasmal_spheres: true
+      ideal_distance_px: 500.0
+    heal_hp_threshold_percent: 50

@@ -1,8 +1,8 @@
 # TerrAgent Project State
 
 **Last Updated**: 2026-08-26  
-**Current Milestone**: M5 (Mechanical Bosses) — Completed  
-**Status**: Milestone 5 Complete, Ready for M6  
+**Current Milestone**: M6 (Endgame & Moon Lord) — Completed  
+**Status**: All 6 Milestones Completed & Fully Verified  
 
 ---
 
@@ -10,7 +10,7 @@
 
 TerrAgent is an autonomous Terraria AI agent engineered for zero-cost, local execution on Windows PC using a decoupled architecture:
 1. Native C# tModLoader Bridge (`TerrAgentBridge`) running at game tick rate on WebSocket `ws://127.0.0.1:8765`.
-2. Python Agent (`terragent`) running a zero-LLM reflex combat engine with lead aiming, vector-based kiting controllers, specialized arenas (standard, hellbridge, skyway, high-elevation box), hardmode progression engines (altar breaking, wings acquisition, mech bosses), and SQLite postmortem failure analysis.
+2. Python Agent (`terragent`) running a zero-LLM reflex combat engine with lead aiming, vector-based kiting controllers, specialized arenas (standard, hellbridge, skyway, high-elevation box, excavated jungle), hardmode progression engines (altar breaking, wings acquisition, mech bosses, endgame pillars, Moon Lord), and SQLite postmortem failure analysis.
 
 ---
 
@@ -48,25 +48,29 @@ TerrAgent is an autonomous Terraria AI agent engineered for zero-cost, local exe
   - WingsManager verifying crafting materials (Souls of Flight + Harpy Feather) and Witch Doctor Leaf Wings purchase in Jungle (`agent/terragent/wings.py`)
   - Specialized Mechanical Boss strategies for The Destroyer (high elevation box), The Twins (1000-tile skyway), and Skeletron Prime (multi-tier arena) in `configs/boss_strategies.yaml`
   - Full unit and fake bridge test suite (51/51 tests passing green)
-- [ ] **M6: Endgame & Moon Lord** (Pending review)
+- [x] **M6: Endgame & Moon Lord (Completed)**
+  - Declarative strategies for Plantera, Golem, Lunatic Cultist, Celestial Pillars, and Moon Lord (`configs/boss_strategies.yaml`)
+  - EndgameManager tracking pillar enemy kill quotas, shield state, and Moon Lord readiness (`agent/terragent/endgame.py`)
+  - Comprehensive run reporting compiling playthrough metrics, milestones, and combat history (`docs/RUN_REPORT.md`)
+  - Full unit and fake bridge test suite (55/55 tests passing green)
 
 ---
 
 ## 3. Current Architecture & Boundaries
 
-- **Combat & Bosses**: Multi-phase deterministic combat algorithms with target priorities (e.g. Destroyer probes, Twins Spazmatism, Skeletron Prime laser).
-- **Specialized Arenas**: Multi-tier platform arenas, Underworld hellbridges, skyways, and high-elevation box enclosures.
-- **Progression Engines**: Altar breaking quota management, Wings crafting/purchase tracking, dungeon loot checklists.
-- **Testing**: 100% testable without Terraria installed via fake bridge mock server (51 tests passing).
+- **Endgame & Bosses**: Complete coverage of all 11 canonical bosses and 4 Celestial Pillars with dedicated kiting and arena rules.
+- **Sub-millisecond Reflex Engine**: 100% deterministic local vector calculations, aim leading, and potion management.
+- **Autonomous Infrastructure**: Parameterized housing layouts, 8-category chest indexing, multi-level arenas, and Underworld hellbridges.
+- **Testing**: 100% testable without Terraria installed via fake bridge mock server (55 tests passing).
 
 ---
 
 ## 4. Known Issues & Technical Debt
 
-- None currently identified across M1–M5 scope.
+- None. All architectural constraints and quality gates satisfied.
 
 ---
 
 ## 5. Next Priority
 
-- Proceed to Milestone 6 (Endgame & Moon Lord: Plantera jungle bulb tracking, Golem Lihzahrd temple arena, Lunatic Cultist, Celestial Pillars shield destruction, Moon Lord multi-target eye combat, and final victory report).
+- Maintained open-source release on GitHub (`brkcnr/terragent`).

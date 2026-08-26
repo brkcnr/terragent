@@ -119,3 +119,27 @@
 - **Context**: The Destroyer cannot reach high elevations without solid blocks, while The Twins require long horizontal kiting to evade Spazmatism's cursed flamethrower.
 - **Decision**: Provide specialized arena generators: a high-elevation box platform for The Destroyer and an extended 1,000-tile asphalt/platform skyway for The Twins.
 - **Consequences**: Maximizes DPS efficiency with Daedalus Stormbow / Megashark while minimizing incoming damage.
+
+---
+
+## ADR 016: Celestial Pillar Shield Mechanics & Crawltipede Ground Adherence
+- **Status**: Accepted (2026-08-26)
+- **Context**: The four Celestial Pillars (Solar, Vortex, Nebula, Stardust) remain immune to damage until 100/150 subordinate enemies are eliminated. Furthermore, the Solar Pillar spawns Crawltipedes that inflict lethal damage on airborne players.
+- **Decision**: Implement an `EndgameManager` that tracks enemy kill counts per pillar and enforces strict ground-level combat positioning during the Solar Pillar encounter.
+- **Consequences**: Ensures safe and systematic destruction of all four Celestial Pillars.
+
+---
+
+## ADR 017: Moon Lord Multi-Target Eye Balancing & Phantasmal Deathray Mitigation
+- **Status**: Accepted (2026-08-26)
+- **Context**: Defeating Moon Lord requires eliminating both hand eyes and the forehead eye in close succession to minimize the duration of exposed True Eyes of Cthulhu, while dodging the fatal Phantasmal Deathray.
+- **Decision**: Balance damage evenly across all three Phase 1 eye targets and utilize overhead solid roofing / vertical flight maneuvers during the forehead deathray sweep.
+- **Consequences**: Maximizes survivability during the endgame climax.
+
+---
+
+## ADR 018: Automated End-to-End Run Reporting
+- **Status**: Accepted (2026-08-26)
+- **Context**: A complete autonomous run spanning M1 through M6 must produce a comprehensive, structured artifact logging total duration, boss attempt counts, resources mined, and victory status.
+- **Decision**: Implement `generate_final_run_report()` compiling data from `MemoryStore`, `PostmortemManager`, and `EndgameManager` into JSON and Markdown reports.
+- **Consequences**: Provides total visibility and validation of autonomous playthrough performance.

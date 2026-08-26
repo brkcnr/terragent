@@ -9,4 +9,4 @@ This document outlines the phased milestone progression of the TerrAgent project
 | **M3: Pre-Hardmode Combat** | Data-driven boss strategies (Eye of Cthulhu, Eater of Worlds, Brain of Cthulhu), multi-tiered platform arena builder with buff stations, reflex combat engine with lead aiming & kiting controllers, and SQLite postmortem logging. | **Completed** |
 | **M4: Hardmode Transition** | Skeletron and Wall of Flesh defeats, underworld hellbridge automation, dungeon loot harvesting, and hardmode transition handling. | **Completed** |
 | **M5: Mechanical Bosses** | Altar breaking ore progression (Cobalt/Palladium, Mythril/Orichalcum, Adamantite/Titanium), wings acquisition, and Destroyer/Twins/Skeletron Prime specialized combat patterns. | **Completed** |
-| **M6: Endgame & Moon Lord** | Plantera, Golem, Lunatic Cultist, Celestial Pillars, and Moon Lord defeat; final run reporting. | Planned |
+| **M6: Endgame & Moon Lord** | Plantera, Golem, Lunatic Cultist, Celestial Pillars shield tracking, and Moon Lord multi-target victory; final run reporting. | **Completed** |
