@@ -1,17 +1,21 @@
 """TerrAgent: Autonomous AI agent for Terraria.
 
 This package provides the core client, reflex execution loop, combat engine,
-arena builder, housing manager, categorized storage, postmortem analysis,
-and schemas for communicating with the TerrAgentBridge tModLoader mod.
+arena builder, hellbridge builder, dungeon manager, hardmode manager,
+housing manager, categorized storage, postmortem analysis, and schemas for
+communicating with the TerrAgentBridge tModLoader mod.
 """
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 __protocol_version__ = "1.0.0"
 
 from terragent.arena import ArenaBuilder, ArenaSpec
 from terragent.bridge_client import BridgeClient
 from terragent.combat import CombatEngine, calculate_circle_kite_target, calculate_lead_aim
 from terragent.config import BridgeConfig, ReflexConfig, TerrAgentConfig, load_config
+from terragent.dungeon import DungeonManager
+from terragent.hardmode import HardmodeManager, HardmodeStatus
+from terragent.hellbridge import HellbridgeBuilder, HellbridgeSpec
 from terragent.housing import (
     HousingManager,
     StructureTemplate,
@@ -32,6 +36,7 @@ from terragent.schemas import (
     GameState,
     HandshakeRequest,
     HandshakeResponse,
+    InteractNPCCommand,
     InventorySlot,
     MoveCommand,
     NearbyEnemy,
@@ -43,6 +48,7 @@ from terragent.schemas import (
     QueryHousingResponse,
     SetSpawnCommand,
     TownNPC,
+    UseItemCommand,
     UsePotionCommand,
     WithdrawChestCommand,
 )
@@ -61,10 +67,16 @@ __all__ = [
     "ChestItemSlot",
     "CombatEngine",
     "DepositChestCommand",
+    "DungeonManager",
     "GameState",
     "HandshakeRequest",
     "HandshakeResponse",
+    "HardmodeManager",
+    "HardmodeStatus",
+    "HellbridgeBuilder",
+    "HellbridgeSpec",
     "HousingManager",
+    "InteractNPCCommand",
     "InventorySlot",
     "ItemCategory",
     "MemoryStore",
@@ -84,6 +96,7 @@ __all__ = [
     "StructureTemplate",
     "TerrAgentConfig",
     "TownNPC",
+    "UseItemCommand",
     "UsePotionCommand",
     "WithdrawChestCommand",
     "__protocol_version__",

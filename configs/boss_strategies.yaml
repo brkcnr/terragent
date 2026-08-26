@@ -151,3 +151,87 @@ brain_of_cthulhu:
       knockback_lock: true
       ideal_distance_px: 180.0
     heal_hp_threshold_percent: 50
+
+skeletron:
+  boss_id: "skeletron"
+  display_name: "Skeletron"
+  max_attempts: 3
+  summon_method: "talk_to_old_man_at_night"
+  readiness_criteria:
+    min_hp: 240
+    min_defense: 16
+    min_time_of_day: "night_7_30_pm"
+    recommended_armor: "shadow_or_crimtane"
+    recommended_weapons:
+      - "Minishark"
+      - "Space Gun"
+      - "Gold Bow"
+    required_ammo:
+      name: "Meteor Shot"
+      item_id: 234
+      min_quantity: 400
+    required_buffs:
+      - "Ironskin"
+      - "Regeneration"
+      - "Swiftness"
+  arena:
+    layers: 3
+    platform_length: 120
+    layer_spacing: 6
+    campfire_spacing: 40
+    heart_lantern_spacing: 40
+  combat_patterns:
+    phase_1:
+      pattern: "circle_kite"
+      target_priority: "hands_first"
+      ideal_distance_px: 280.0
+    phase_2:
+      pattern: "horizontal_run"
+      target_priority: "spinning_head"
+      turnaround_on_spin: true
+      ideal_distance_px: 360.0
+    heal_hp_threshold_percent: 45
+
+wall_of_flesh:
+  boss_id: "wall_of_flesh"
+  display_name: "Wall of Flesh"
+  max_attempts: 3
+  summon_item:
+    name: "Guide Voodoo Doll"
+    item_id: 267
+    summon_method: "drop_in_underworld_lava"
+  readiness_criteria:
+    min_hp: 300
+    min_defense: 22
+    recommended_armor: "molten_armor"
+    recommended_weapons:
+      - "Phoenix Blaster"
+      - "Beenades"
+      - "Demon Scythe"
+      - "Molten Fury"
+    required_ammo:
+      name: "Hellfire Arrow"
+      item_id: 265
+      min_quantity: 400
+    required_buffs:
+      - "Ironskin"
+      - "Regeneration"
+      - "Swiftness"
+      - "Obsidian Skin"
+      - "Endurance"
+  arena:
+    type: "hellbridge"
+    platform_length: 1500
+    campfire_spacing: 60
+    heart_lantern_spacing: 60
+  combat_patterns:
+    phase_1:
+      pattern: "horizontal_run"
+      target_priority: "hungry_minions_then_eyes"
+      ideal_distance_px: 300.0
+    phase_2:
+      pattern: "horizontal_run"
+      target_priority: "mouth_and_eyes"
+      accelerate_on_enrage: true
+      ideal_distance_px: 350.0
+    heal_hp_threshold_percent: 50

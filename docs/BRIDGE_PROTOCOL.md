@@ -127,6 +127,29 @@ Requests movement toward target world coordinates:
 }
 ```
 
+### Interact NPC Command (`interact_npc`)
+```json
+{
+  "type": "action",
+  "command_id": "cmd_01J6NPC1",
+  "action": "interact_npc",
+  "npc_name": "Old Man",
+  "option_index": 0
+}
+```
+
+### Use Item Command (`use_item`)
+```json
+{
+  "type": "action",
+  "command_id": "cmd_01J6ITM1",
+  "action": "use_item",
+  "slot": 0,
+  "target_x": 2500.0,
+  "target_y": 1200.0
+}
+```
+
 ### Set Spawn Command (`set_spawn`)
 ```json
 {

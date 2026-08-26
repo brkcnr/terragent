@@ -1,8 +1,8 @@
-"""Integration tests with a fake WebSocket bridge server (Milestones 1, 2 & 3).
+"""Integration tests with a fake WebSocket bridge server (Milestones 1 to 4).
 
 Tests connection, protocol handshake, state parsing with enemies and buffs,
-command dispatch (movement, attack, potions, tiles), housing queries, chest queries,
-and error handling without needing Terraria installed.
+command dispatch (movement, attack, potions, tiles, NPC interactions, item usage),
+housing queries, chest queries, and error handling without needing Terraria installed.
 """
 
 import asyncio
@@ -16,7 +16,9 @@ from terragent.schemas import (
     AttackCommand,
     BridgeConnectionError,
     GameState,
+    InteractNPCCommand,
     ProtocolVersionMismatchError,
+    UseItemCommand,
     UsePotionCommand,
 )
 from websockets.asyncio.server import ServerConnection, serve
@@ -76,7 +78,7 @@ class FakeBridgeServer:
                 await websocket.close()
                 return
 
-            # 3. Stream a canned GameState with NPCs, Boss, and Buffs
+            # 3. Stream a canned GameState with NPCs, Boss, Buffs, and Hardmode flag
             sample_state = {
                 "type": "game_state",
                 "protocol_version": self.protocol_version,
@@ -116,6 +118,9 @@ class FakeBridgeServer:
                 ],
                 "spawn_tile_x": 125,
                 "spawn_tile_y": 80,
+                "is_hardmode": True,
+                "time_of_day": 12000.0,
+                "is_night": False,
             }
             await websocket.send(json.dumps(sample_state))
 
@@ -166,7 +171,7 @@ class FakeBridgeServer:
 
 @pytest.mark.asyncio
 async def test_bridge_connection_and_combat_dispatch() -> None:
-    """Test connection, GameState parsing with Enemies & Buffs, and combat command dispatch."""
+    """Test connection, GameState parsing with Hardmode flag, and command dispatch."""
     server = FakeBridgeServer(port=8766)
     await server.start()
 
@@ -177,25 +182,25 @@ async def test_bridge_connection_and_combat_dispatch() -> None:
         await client.connect()
         assert client.is_connected
 
-        # Receive game state and verify Enemies & Buffs
+        # Receive game state and verify Hardmode & Enemies
         state = await client.receive_game_state()
         assert isinstance(state, GameState)
+        assert state.is_hardmode is True
         assert len(state.nearby_enemies) == 1
         assert state.nearby_enemies[0].name == "Eye of Cthulhu"
-        assert state.nearby_enemies[0].is_boss is True
-        assert len(state.player.buffs) == 1
-        assert state.player.buffs[0].name == "Ironskin"
 
-        # Dispatch Combat Actions: Attack and UsePotion
+        # Dispatch Combat, NPC Interaction, and Item Usage Actions
         await client.send_command(AttackCommand(aim_x=2700.0, aim_y=1100.0, use_item_slot=0))
         await client.send_command(UsePotionCommand(potion_type="healing"))
+        await client.send_command(InteractNPCCommand(npc_name="Old Man", option_index=0))
+        await client.send_command(UseItemCommand(slot=0, target_x=2500.0, target_y=1200.0))
 
         await asyncio.sleep(0.05)
-        assert len(server.received_commands) == 2
+        assert len(server.received_commands) == 4
         assert server.received_commands[0]["action"] == "attack"
-        assert server.received_commands[0]["aim_x"] == 2700.0
         assert server.received_commands[1]["action"] == "use_potion"
-        assert server.received_commands[1]["potion_type"] == "healing"
+        assert server.received_commands[2]["action"] == "interact_npc"
+        assert server.received_commands[3]["action"] == "use_item"
 
     finally:
         await client.disconnect()

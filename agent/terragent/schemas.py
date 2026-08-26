@@ -1,8 +1,8 @@
-"""Pydantic schemas for the TerrAgent bridge protocol (Milestones 1, 2 & 3).
+"""Pydantic schemas for the TerrAgent bridge protocol (Milestones 1 to 4).
 
 This module defines strongly typed models for WebSocket communication between
 the Python agent and the C# tModLoader bridge mod, covering player state,
-enemies, buffs, combat actions, potion consumption, and queries.
+enemies, buffs, combat actions, potion consumption, NPC interactions, and hardmode flags.
 """
 
 import uuid
@@ -132,6 +132,9 @@ class GameState(BaseModel):
     )
     spawn_tile_x: int | None = Field(default=None, description="Bed spawn tile X if set")
     spawn_tile_y: int | None = Field(default=None, description="Bed spawn tile Y if set")
+    is_hardmode: bool = Field(default=False, description="Whether world is in Hardmode")
+    time_of_day: float = Field(default=0.0, description="In-game time of day (0.0 to 54000.0)")
+    is_night: bool = Field(default=False, description="Whether it is currently in-game nighttime")
 
 
 # ==========================================
@@ -181,6 +184,23 @@ class UsePotionCommand(BaseActionCommand):
         default="healing",
         description="Type of potion to consume",
     )
+
+
+class InteractNPCCommand(BaseActionCommand):
+    """Command requesting dialogue interaction with a specific Town NPC or entity."""
+
+    action: Literal["interact_npc"] = "interact_npc"
+    npc_name: str = Field(description="Name or role of NPC (e.g. 'Old Man', 'Nurse')")
+    option_index: int = Field(default=0, ge=0, description="Dialogue option index")
+
+
+class UseItemCommand(BaseActionCommand):
+    """Command requesting direct use of an inventory item at targeted coordinates."""
+
+    action: Literal["use_item"] = "use_item"
+    slot: int = Field(ge=0, le=49, description="Inventory slot index to use")
+    target_x: float = Field(description="Target coordinate X")
+    target_y: float = Field(description="Target coordinate Y")
 
 
 class PlaceTileCommand(BaseActionCommand):
@@ -247,6 +267,8 @@ ActionCommand = Annotated[
     MoveCommand
     | AttackCommand
     | UsePotionCommand
+    | InteractNPCCommand
+    | UseItemCommand
     | PlaceTileCommand
     | BreakTileCommand
     | SetSpawnCommand

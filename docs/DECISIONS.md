@@ -87,3 +87,19 @@
 - **Context**: If a boss fight fails, the agent needs to analyze the cause of death (low damage, inadequate arena length, missing buffs) before retrying, capped at ≤3 attempts before review.
 - **Decision**: Persist structured attempt logs in a `boss_attempts` SQLite table and feed past attempt metrics into subsequent attempt planning.
 - **Consequences**: Prevents infinite death loops and ensures systematic recovery from combat failures.
+
+---
+
+## ADR 012: Hellbridge Runway Construction with Automated Obstacle Clearing
+- **Status**: Accepted (2026-08-26)
+- **Context**: The Wall of Flesh encounter requires an uninterrupted linear runway spanning 1,000–2,000 tiles across the Underworld lava lakes while avoiding obsidian ruin obstructions.
+- **Decision**: Implement a dedicated `HellbridgeBuilder` that constructs continuous platform runways and plans obstacle cuts through ruin walls.
+- **Consequences**: Guarantees unobstructed player movement and consistent kiting velocity across the entire Underworld.
+
+---
+
+## ADR 013: Post-WoF Hardmode State Transition Protocol
+- **Status**: Accepted (2026-08-26)
+- **Context**: Defeating the Wall of Flesh triggers Hardmode, dramatically increasing enemy damage and spreading the Hallow and Evil biomes.
+- **Decision**: Implement a `HardmodeManager` state controller that validates Pwnhammer acquisition, initiates an immediate retreat to base, and sets up safety protocols before commencing altar breaking in M5.
+- **Consequences**: Prevents premature character death immediately after entering Hardmode.
