@@ -235,3 +235,154 @@ wall_of_flesh:
       accelerate_on_enrage: true
       ideal_distance_px: 350.0
     heal_hp_threshold_percent: 50
+
+the_destroyer:
+  boss_id: "the_destroyer"
+  display_name: "The Destroyer"
+  max_attempts: 3
+  summon_item:
+    name: "Mechanical Worm"
+    item_id: 556
+    crafting_recipe:
+      altar: "mythril_or_orichalcum_anvil"
+      materials:
+        - item_name: "Rotten Chunk"
+          quantity: 6
+        - item_name: "Iron Bar"
+          quantity: 5
+        - item_name: "Soul of Night"
+          quantity: 6
+  readiness_criteria:
+    min_hp: 400
+    min_defense: 45
+    recommended_armor: "titanium_or_adamantite"
+    recommended_weapons:
+      - "Daedalus Stormbow"
+      - "Nimbus Rod"
+      - "Titanium Repeater"
+    required_ammo:
+      name: "Holy Arrow"
+      item_id: 545
+      min_quantity: 600
+    required_buffs:
+      - "Ironskin"
+      - "Regeneration"
+      - "Swiftness"
+      - "Archery"
+  arena:
+    type: "high_elevation_box"
+    elevation_above_ground_tiles: 150
+    box_width: 30
+    box_height: 15
+    platform_openings: true
+    campfire_spacing: 15
+    heart_lantern_spacing: 15
+  combat_patterns:
+    phase_1:
+      pattern: "horizontal_run"
+      target_priority: "probes_first_then_body"
+      rain_arrows_from_above: true
+      ideal_distance_px: 300.0
+    heal_hp_threshold_percent: 50
+
+the_twins:
+  boss_id: "the_twins"
+  display_name: "The Twins"
+  max_attempts: 3
+  summon_item:
+    name: "Mechanical Eye"
+    item_id: 544
+    crafting_recipe:
+      altar: "mythril_or_orichalcum_anvil"
+      materials:
+        - item_name: "Lens"
+          quantity: 3
+        - item_name: "Iron Bar"
+          quantity: 5
+        - item_name: "Soul of Light"
+          quantity: 6
+  readiness_criteria:
+    min_hp: 400
+    min_defense: 45
+    has_wings: true
+    recommended_armor: "titanium_or_adamantite"
+    recommended_weapons:
+      - "Megashark"
+      - "Titanium Repeater"
+    required_ammo:
+      name: "Crystal Bullet"
+      item_id: 515
+      min_quantity: 1000
+    required_buffs:
+      - "Ironskin"
+      - "Regeneration"
+      - "Swiftness"
+      - "Lifeforce"
+  arena:
+    type: "skyway"
+    platform_length: 1000
+    campfire_spacing: 60
+    heart_lantern_spacing: 60
+  combat_patterns:
+    phase_1:
+      pattern: "horizontal_run"
+      target_priority: "spazmatism_first"
+      ideal_distance_px: 400.0
+    phase_2:
+      pattern: "horizontal_run"
+      target_priority: "retinazer_second"
+      dodge_lasers: true
+      ideal_distance_px: 350.0
+    heal_hp_threshold_percent: 50
+
+skeletron_prime:
+  boss_id: "skeletron_prime"
+  display_name: "Skeletron Prime"
+  max_attempts: 3
+  summon_item:
+    name: "Mechanical Skull"
+    item_id: 557
+    crafting_recipe:
+      altar: "mythril_or_orichalcum_anvil"
+      materials:
+        - item_name: "Bone"
+          quantity: 30
+        - item_name: "Iron Bar"
+          quantity: 5
+        - item_name: "Soul of Light"
+          quantity: 3
+        - item_name: "Soul of Night"
+          quantity: 3
+  readiness_criteria:
+    min_hp: 400
+    min_defense: 45
+    has_wings: true
+    recommended_armor: "titanium_or_adamantite"
+    recommended_weapons:
+      - "Megashark"
+      - "Daedalus Stormbow"
+    required_ammo:
+      name: "Crystal Bullet"
+      item_id: 515
+      min_quantity: 1000
+    required_buffs:
+      - "Ironskin"
+      - "Regeneration"
+      - "Swiftness"
+  arena:
+    layers: 4
+    platform_length: 150
+    layer_spacing: 6
+    campfire_spacing: 40
+    heart_lantern_spacing: 40
+  combat_patterns:
+    phase_1:
+      pattern: "circle_kite"
+      target_priority: "prime_laser_then_cannon"
+      ideal_distance_px: 320.0
+    phase_2:
+      pattern: "horizontal_run"
+      target_priority: "prime_head_spin"
+      turnaround_on_spin: true
+      ideal_distance_px: 400.0
+    heal_hp_threshold_percent: 45

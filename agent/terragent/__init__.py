@@ -2,13 +2,14 @@
 
 This package provides the core client, reflex execution loop, combat engine,
 arena builder, hellbridge builder, dungeon manager, hardmode manager,
-housing manager, categorized storage, postmortem analysis, and schemas for
-communicating with the TerrAgentBridge tModLoader mod.
+altar manager, wings manager, housing manager, categorized storage,
+postmortem analysis, and schemas for communicating with the TerrAgentBridge mod.
 """
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 __protocol_version__ = "1.0.0"
 
+from terragent.altar import AltarManager, HardmodeOreTier
 from terragent.arena import ArenaBuilder, ArenaSpec
 from terragent.bridge_client import BridgeClient
 from terragent.combat import CombatEngine, calculate_circle_kite_target, calculate_lead_aim
@@ -53,9 +54,11 @@ from terragent.schemas import (
     WithdrawChestCommand,
 )
 from terragent.storage import ItemCategory, StorageManager, categorize_item
+from terragent.wings import KNOWN_WING_IDS, WingsManager
 
 __all__ = [
     "ActionResult",
+    "AltarManager",
     "ArenaBuilder",
     "ArenaSpec",
     "AttackCommand",
@@ -72,6 +75,7 @@ __all__ = [
     "HandshakeRequest",
     "HandshakeResponse",
     "HardmodeManager",
+    "HardmodeOreTier",
     "HardmodeStatus",
     "HellbridgeBuilder",
     "HellbridgeSpec",
@@ -79,6 +83,7 @@ __all__ = [
     "InteractNPCCommand",
     "InventorySlot",
     "ItemCategory",
+    "KNOWN_WING_IDS",
     "MemoryStore",
     "MoveCommand",
     "NearbyEnemy",
@@ -98,6 +103,7 @@ __all__ = [
     "TownNPC",
     "UseItemCommand",
     "UsePotionCommand",
+    "WingsManager",
     "WithdrawChestCommand",
     "__protocol_version__",
     "__version__",

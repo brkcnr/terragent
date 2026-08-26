@@ -103,3 +103,19 @@
 - **Context**: Defeating the Wall of Flesh triggers Hardmode, dramatically increasing enemy damage and spreading the Hallow and Evil biomes.
 - **Decision**: Implement a `HardmodeManager` state controller that validates Pwnhammer acquisition, initiates an immediate retreat to base, and sets up safety protocols before commencing altar breaking in M5.
 - **Consequences**: Prevents premature character death immediately after entering Hardmode.
+
+---
+
+## ADR 014: Systematic Hardmode Altar Smashing & Ore Tier Progression
+- **Status**: Accepted (2026-08-26)
+- **Context**: Entering Hardmode requires breaking Demon/Crimson Altars with the Pwnhammer to seed Cobalt/Palladium, Mythril/Orichalcum, and Adamantite/Titanium ores in the world.
+- **Decision**: Implement an `AltarManager` that tracks altar coordinates and smashes exactly 6–9 altars in multiples of 3 for diminishing returns balance and corrupt block containment.
+- **Consequences**: Unlocks highest-tier Hardmode forges and anvils while minimizing random corruption spread.
+
+---
+
+## ADR 015: Specialized Arenas for Mechanical Boss Encounters
+- **Status**: Accepted (2026-08-26)
+- **Context**: The Destroyer cannot reach high elevations without solid blocks, while The Twins require long horizontal kiting to evade Spazmatism's cursed flamethrower.
+- **Decision**: Provide specialized arena generators: a high-elevation box platform for The Destroyer and an extended 1,000-tile asphalt/platform skyway for The Twins.
+- **Consequences**: Maximizes DPS efficiency with Daedalus Stormbow / Megashark while minimizing incoming damage.

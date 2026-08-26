@@ -1,8 +1,8 @@
 # TerrAgent Project State
 
 **Last Updated**: 2026-08-26  
-**Current Milestone**: M3 (Pre-hardmode Combat) — Completed  
-**Status**: Milestone 3 Complete, Ready for M4  
+**Current Milestone**: M5 (Mechanical Bosses) — Completed  
+**Status**: Milestone 5 Complete, Ready for M6  
 
 ---
 
@@ -10,7 +10,7 @@
 
 TerrAgent is an autonomous Terraria AI agent engineered for zero-cost, local execution on Windows PC using a decoupled architecture:
 1. Native C# tModLoader Bridge (`TerrAgentBridge`) running at game tick rate on WebSocket `ws://127.0.0.1:8765`.
-2. Python Agent (`terragent`) running a zero-LLM reflex combat engine with lead aiming, vector-based kiting controllers, multi-tiered arena generation, persistent SQLite memory, and postmortem failure analysis.
+2. Python Agent (`terragent`) running a zero-LLM reflex combat engine with lead aiming, vector-based kiting controllers, specialized arenas (standard, hellbridge, skyway, high-elevation box), hardmode progression engines (altar breaking, wings acquisition, mech bosses), and SQLite postmortem failure analysis.
 
 ---
 
@@ -37,28 +37,36 @@ TerrAgent is an autonomous Terraria AI agent engineered for zero-cost, local exe
   - Deterministic reflex combat engine with circle kiting, horizontal platform sprinting, predictive lead aiming, weapon switching, and auto-potion healing (`agent/terragent/combat.py`)
   - SQLite-backed postmortem failure analysis and attempt limiter (`agent/terragent/postmortem.py`)
   - Full unit and fake bridge test suite (38/38 tests passing green)
-- [ ] **M4: Hardmode Transition** (Pending review)
-- [ ] **M5: Mechanical Bosses**
-- [ ] **M6: Endgame & Moon Lord**
+- [x] **M4: Hardmode Transition (Completed)**
+  - Declarative strategies for Skeletron and Wall of Flesh (`configs/boss_strategies.yaml`)
+  - Underworld HellbridgeBuilder with runway generation and ruin obstacle clearing (`agent/terragent/hellbridge.py`)
+  - DungeonManager for Old Man curse interactions and golden chest loot tracking (`agent/terragent/dungeon.py`)
+  - HardmodeManager for post-WoF state transition and Pwnhammer acquisition (`agent/terragent/hardmode.py`)
+  - Full unit and fake bridge test suite (44/44 tests passing green)
+- [x] **M5: Mechanical Bosses (Completed)**
+  - AltarManager with Pwnhammer breaking plans and hardmode ore tier hierarchy (Cobalt/Palladium -> Mythril/Orichalcum -> Adamantite/Titanium) (`agent/terragent/altar.py`)
+  - WingsManager verifying crafting materials (Souls of Flight + Harpy Feather) and Witch Doctor Leaf Wings purchase in Jungle (`agent/terragent/wings.py`)
+  - Specialized Mechanical Boss strategies for The Destroyer (high elevation box), The Twins (1000-tile skyway), and Skeletron Prime (multi-tier arena) in `configs/boss_strategies.yaml`
+  - Full unit and fake bridge test suite (51/51 tests passing green)
+- [ ] **M6: Endgame & Moon Lord** (Pending review)
 
 ---
 
 ## 3. Current Architecture & Boundaries
 
-- **Combat Engine**: Sub-millisecond vector math calculations (`circle_kite`, `horizontal_run`, `calculate_lead_aim`), weapon slot switching, and potion management.
-- **Arena Builder**: Multi-level wooden platform generator with life regeneration auras (Campfires, Heart Lanterns) and movement speed boosts (Sunflowers).
-- **Strategies**: Declarative YAML configuration (`configs/boss_strategies.yaml`) specifying phase triggers, gear minimums, and combat patterns.
-- **Postmortem**: Historical battle logging and failure diagnostics (`PostmortemManager`) to adapt combat strategies between attempts.
-- **Testing**: 100% testable without Terraria installed via fake bridge mock server (38 tests passing).
+- **Combat & Bosses**: Multi-phase deterministic combat algorithms with target priorities (e.g. Destroyer probes, Twins Spazmatism, Skeletron Prime laser).
+- **Specialized Arenas**: Multi-tier platform arenas, Underworld hellbridges, skyways, and high-elevation box enclosures.
+- **Progression Engines**: Altar breaking quota management, Wings crafting/purchase tracking, dungeon loot checklists.
+- **Testing**: 100% testable without Terraria installed via fake bridge mock server (51 tests passing).
 
 ---
 
 ## 4. Known Issues & Technical Debt
 
-- None currently identified for M1/M2/M3 scope.
+- None currently identified across M1–M5 scope.
 
 ---
 
 ## 5. Next Priority
 
-- Proceed to Milestone 4 (Hardmode Transition: Skeletron defeat, Dungeon loot acquisition, Underworld hellstone tier, hellbridge construction, and Wall of Flesh battle).
+- Proceed to Milestone 6 (Endgame & Moon Lord: Plantera jungle bulb tracking, Golem Lihzahrd temple arena, Lunatic Cultist, Celestial Pillars shield destruction, Moon Lord multi-target eye combat, and final victory report).
