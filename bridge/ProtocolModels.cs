@@ -40,7 +40,7 @@ public class HandshakeResponse
 }
 
 /// <summary>
-/// Represents a single inventory slot in M1.
+/// Represents a single inventory slot.
 /// </summary>
 public class InventorySlotModel
 {
@@ -58,7 +58,25 @@ public class InventorySlotModel
 }
 
 /// <summary>
-/// Player state model for Milestone 1.
+/// Represents a Town NPC status in the roster.
+/// </summary>
+public class TownNPCModel
+{
+    [JsonPropertyName("npc_type")]
+    public int NpcType { get; set; }
+
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [JsonPropertyName("is_housed")]
+    public bool IsHoused { get; set; }
+
+    [JsonPropertyName("room_id")]
+    public int? RoomId { get; set; }
+}
+
+/// <summary>
+/// Player state model.
 /// </summary>
 public class PlayerStateModel
 {
@@ -97,6 +115,15 @@ public class GameStateModel
 
     [JsonPropertyName("player")]
     public PlayerStateModel Player { get; set; } = new();
+
+    [JsonPropertyName("town_npcs")]
+    public List<TownNPCModel> TownNpcs { get; set; } = new();
+
+    [JsonPropertyName("spawn_tile_x")]
+    public int? SpawnTileX { get; set; }
+
+    [JsonPropertyName("spawn_tile_y")]
+    public int? SpawnTileY { get; set; }
 }
 
 /// <summary>
@@ -121,6 +148,126 @@ public class MoveCommandModel
 
     [JsonPropertyName("duration_ms")]
     public int DurationMs { get; set; }
+}
+
+/// <summary>
+/// Housing query request payload.
+/// </summary>
+public class QueryHousingRequestModel
+{
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = "query";
+
+    [JsonPropertyName("query_id")]
+    public string QueryId { get; set; } = string.Empty;
+
+    [JsonPropertyName("query")]
+    public string Query { get; set; } = "query_housing";
+
+    [JsonPropertyName("tile_x")]
+    public int TileX { get; set; }
+
+    [JsonPropertyName("tile_y")]
+    public int TileY { get; set; }
+}
+
+/// <summary>
+/// Housing query response payload.
+/// </summary>
+public class QueryHousingResponseModel
+{
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = "query_response";
+
+    [JsonPropertyName("query_id")]
+    public string QueryId { get; set; } = string.Empty;
+
+    [JsonPropertyName("query")]
+    public string Query { get; set; } = "query_housing";
+
+    [JsonPropertyName("success")]
+    public bool Success { get; set; }
+
+    [JsonPropertyName("is_valid")]
+    public bool IsValid { get; set; }
+
+    [JsonPropertyName("failure_reason")]
+    public string? FailureReason { get; set; }
+
+    [JsonPropertyName("assigned_npc")]
+    public string? AssignedNpc { get; set; }
+
+    [JsonPropertyName("details")]
+    public string Details { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// Item slot within a chest.
+/// </summary>
+public class ChestItemSlotModel
+{
+    [JsonPropertyName("slot")]
+    public int Slot { get; set; }
+
+    [JsonPropertyName("item_id")]
+    public int ItemId { get; set; }
+
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [JsonPropertyName("stack")]
+    public int Stack { get; set; }
+}
+
+/// <summary>
+/// Chest query request payload.
+/// </summary>
+public class QueryChestRequestModel
+{
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = "query";
+
+    [JsonPropertyName("query_id")]
+    public string QueryId { get; set; } = string.Empty;
+
+    [JsonPropertyName("query")]
+    public string Query { get; set; } = "query_chest";
+
+    [JsonPropertyName("chest_x")]
+    public int ChestX { get; set; }
+
+    [JsonPropertyName("chest_y")]
+    public int ChestY { get; set; }
+}
+
+/// <summary>
+/// Chest query response payload.
+/// </summary>
+public class QueryChestResponseModel
+{
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = "query_response";
+
+    [JsonPropertyName("query_id")]
+    public string QueryId { get; set; } = string.Empty;
+
+    [JsonPropertyName("query")]
+    public string Query { get; set; } = "query_chest";
+
+    [JsonPropertyName("success")]
+    public bool Success { get; set; }
+
+    [JsonPropertyName("chest_x")]
+    public int ChestX { get; set; }
+
+    [JsonPropertyName("chest_y")]
+    public int ChestY { get; set; }
+
+    [JsonPropertyName("items")]
+    public List<ChestItemSlotModel> Items { get; set; } = new();
+
+    [JsonPropertyName("details")]
+    public string Details { get; set; } = string.Empty;
 }
 
 /// <summary>

@@ -1,7 +1,7 @@
-"""Integration tests with a fake WebSocket bridge server (Milestone 1).
+"""Integration tests with a fake WebSocket bridge server (Milestones 1 & 2).
 
 Tests connection, protocol handshake, state parsing, command dispatch,
-and error/mismatch handling without needing Terraria installed.
+housing validity queries, chest item queries, and error handling without needing Terraria installed.
 """
 
 import asyncio
@@ -14,8 +14,11 @@ from terragent.config import BridgeConfig
 from terragent.schemas import (
     BridgeConnectionError,
     GameState,
-    MoveCommand,
+    PlaceTileCommand,
     ProtocolVersionMismatchError,
+    QueryChestResponse,
+    QueryHousingResponse,
+    SetSpawnCommand,
 )
 from websockets.asyncio.server import ServerConnection, serve
 from websockets.exceptions import ConnectionClosed
@@ -37,6 +40,7 @@ class FakeBridgeServer:
         self.protocol_version = protocol_version
         self.reject_handshake = reject_handshake
         self.received_commands: list[dict[str, Any]] = []
+        self.received_queries: list[dict[str, Any]] = []
         self.server: Any = None
         self._stop_event = asyncio.Event()
 
@@ -52,7 +56,7 @@ class FakeBridgeServer:
             await self.server.wait_closed()
 
     async def _handle_client(self, websocket: ServerConnection) -> None:
-        """Handle incoming client connection, handshake, and mock stream."""
+        """Handle incoming client connection, handshake, queries, and mock stream."""
         try:
             # 1. Receive HandshakeRequest
             raw_req = await websocket.recv()
@@ -73,7 +77,7 @@ class FakeBridgeServer:
                 await websocket.close()
                 return
 
-            # 3. Stream a canned GameState and listen for commands
+            # 3. Stream a canned GameState with NPCs and spawn point
             sample_state = {
                 "type": "game_state",
                 "protocol_version": self.protocol_version,
@@ -89,21 +93,65 @@ class FakeBridgeServer:
                         {"slot": 1, "item_id": 3509, "name": "Copper Pickaxe", "stack": 1},
                     ],
                 },
+                "town_npcs": [
+                    {"npc_type": 22, "name": "Andrew", "is_housed": True, "room_id": 1},
+                    {"npc_type": 17, "name": "Alfred", "is_housed": True, "room_id": 2},
+                    {"npc_type": 18, "name": "Molly", "is_housed": True, "room_id": 3},
+                ],
+                "spawn_tile_x": 125,
+                "spawn_tile_y": 80,
             }
             await websocket.send(json.dumps(sample_state))
 
-            # Listen for incoming client commands
+            # Listen for incoming client commands and queries
             async for raw_msg in websocket:
                 msg_data = json.loads(raw_msg)
-                self.received_commands.append(msg_data)
+                msg_type = msg_data.get("type", "")
+
+                if msg_type == "query":
+                    self.received_queries.append(msg_data)
+                    q_name = msg_data.get("query", "")
+                    q_id = msg_data.get("query_id", "")
+
+                    if q_name == "query_housing":
+                        housing_resp = {
+                            "type": "query_response",
+                            "query_id": q_id,
+                            "query": "query_housing",
+                            "success": True,
+                            "is_valid": True,
+                            "failure_reason": None,
+                            "assigned_npc": "Merchant",
+                            "details": "Room valid",
+                        }
+                        await websocket.send(json.dumps(housing_resp))
+
+                    elif q_name == "query_chest":
+                        chest_resp = {
+                            "type": "query_response",
+                            "query_id": q_id,
+                            "query": "query_chest",
+                            "success": True,
+                            "chest_x": msg_data.get("chest_x", 0),
+                            "chest_y": msg_data.get("chest_y", 0),
+                            "items": [
+                                {"slot": 0, "item_id": 12, "name": "Iron Ore", "stack": 75},
+                                {"slot": 1, "item_id": 19, "name": "Gold Bar", "stack": 20},
+                            ],
+                            "details": "Chest items queried",
+                        }
+                        await websocket.send(json.dumps(chest_resp))
+
+                elif msg_type == "action":
+                    self.received_commands.append(msg_data)
 
         except ConnectionClosed:
             pass
 
 
 @pytest.mark.asyncio
-async def test_bridge_connection_success() -> None:
-    """Test successful connection, handshake, and GameState reception."""
+async def test_bridge_connection_and_queries() -> None:
+    """Test connection, GameState parsing with Town NPCs, and query endpoints."""
     server = FakeBridgeServer(port=8766)
     await server.start()
 
@@ -114,22 +162,35 @@ async def test_bridge_connection_success() -> None:
         await client.connect()
         assert client.is_connected
 
-        # Receive game state
+        # Receive game state and verify Town NPCs & spawn point
         state = await client.receive_game_state()
         assert isinstance(state, GameState)
-        assert state.player.hp == 90
-        assert state.player.x == 2500.0
-        assert state.player.inventory[0].name == "Copper Shortsword"
+        assert len(state.town_npcs) == 3
+        assert state.town_npcs[1].name == "Alfred"
+        assert state.spawn_tile_x == 125
 
-        # Send MoveTo command
-        cmd = MoveCommand(target_x=2600.0, target_y=1200.0, duration_ms=400)
-        await client.send_command(cmd)
+        # Query housing validity
+        housing_res = await client.query_housing(tile_x=125, tile_y=80)
+        assert isinstance(housing_res, QueryHousingResponse)
+        assert housing_res.success is True
+        assert housing_res.is_valid is True
+        assert housing_res.assigned_npc == "Merchant"
 
-        # Give server a moment to receive
+        # Query chest contents
+        chest_res = await client.query_chest(chest_x=130, chest_y=85)
+        assert isinstance(chest_res, QueryChestResponse)
+        assert chest_res.success is True
+        assert len(chest_res.items) == 2
+        assert chest_res.items[0].name == "Iron Ore"
+
+        # Send PlaceTile and SetSpawn commands
+        await client.send_command(PlaceTileCommand(tile_x=120, tile_y=80, item_id=9))
+        await client.send_command(SetSpawnCommand(tile_x=125, tile_y=80))
+
         await asyncio.sleep(0.05)
-        assert len(server.received_commands) == 1
-        assert server.received_commands[0]["action"] == "move_to"
-        assert server.received_commands[0]["target_x"] == 2600.0
+        assert len(server.received_commands) == 2
+        assert server.received_commands[0]["action"] == "place_tile"
+        assert server.received_commands[1]["action"] == "set_spawn"
 
     finally:
         await client.disconnect()

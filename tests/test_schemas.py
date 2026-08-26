@@ -48,9 +48,9 @@ def test_inventory_slot_bounds() -> None:
     assert slot.item_id == 3507
     assert slot.stack == 1
 
-    # M1 slot out of bounds (> 4)
+    # Inventory slot out of bounds (> 58)
     with pytest.raises(ValidationError):
-        InventorySlot(slot=5, item_id=1, name="Dirt", stack=1)
+        InventorySlot(slot=100, item_id=1, name="Dirt", stack=1)
 
     # Negative slot
     with pytest.raises(ValidationError):

@@ -4,8 +4,8 @@ This document outlines the phased milestone progression of the TerrAgent project
 
 | Milestone | Target Objective | Status |
 | :--- | :--- | :--- |
-| **M1: Bootstrap** | Bridge mod skeleton, protocol version handshake, typed GameState (M1 scope), MoveTo action command, minimal reflex loop, and fake-bridge integration test suite. | **In Progress / Current** |
-| **M2: Base & NPCs** | NPC housing verification queries, room building templates, organized SQLite chest storage, bed spawn setting, and housing 3+ NPCs (Merchant, Nurse, Demolitionist). | Planned |
+| **M1: Bootstrap** | Bridge mod skeleton, protocol version handshake, typed GameState (M1 scope), MoveTo action command, minimal reflex loop, and fake-bridge integration test suite. | **Completed** |
+| **M2: Base & NPCs** | NPC housing verification queries, parameterized room templates (10x6 interior), categorized 8-chest SQLite storage index, bed spawn setting, and housing 3+ NPCs (Merchant, Nurse, Demolitionist). | **Completed** |
 | **M3: Pre-Hardmode Combat** | Boss arena builder, Eye of Cthulhu and evil-biome boss automated combat behaviors, summon farming, and postmortem logging. | Planned |
 | **M4: Hardmode Transition** | Skeletron and Wall of Flesh defeats, underworld hellbridge automation, hardmode transition handling. | Planned |
 | **M5: Mechanical Bosses** | Altar breaking, hardmode ore tiers, wings acquisition, Destroyer/Twins/Skeletron Prime combat patterns, 8+ NPCs housed. | Planned |

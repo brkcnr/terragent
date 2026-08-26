@@ -92,6 +92,55 @@ Requests movement toward target world coordinates:
 }
 ```
 
+### Place Tile Command (`place_tile`)
+```json
+{
+  "type": "action",
+  "command_id": "cmd_01J6B999",
+  "action": "place_tile",
+  "tile_x": 120,
+  "tile_y": 80,
+  "item_id": 30
+}
+```
+
+### Set Spawn Command (`set_spawn`)
+```json
+{
+  "type": "action",
+  "command_id": "cmd_01J6C888",
+  "action": "set_spawn",
+  "tile_x": 125,
+  "tile_y": 82
+}
+```
+
+### Deposit Chest Command (`deposit_chest`)
+```json
+{
+  "type": "action",
+  "command_id": "cmd_01J6D777",
+  "action": "deposit_chest",
+  "chest_x": 130,
+  "chest_y": 85,
+  "inventory_slot": 10,
+  "target_chest_slot": null
+}
+```
+
+### Withdraw Chest Command (`withdraw_chest`)
+```json
+{
+  "type": "action",
+  "command_id": "cmd_01J6E666",
+  "action": "withdraw_chest",
+  "chest_x": 130,
+  "chest_y": 85,
+  "chest_slot": 2,
+  "target_inventory_slot": null
+}
+```
+
 ### Action Result (Server -> Client)
 ```json
 {
@@ -105,15 +154,61 @@ Requests movement toward target world coordinates:
 }
 ```
 
-If execution fails:
+---
+
+## 4. Query Endpoints (Milestone 2)
+
+Request-response queries over WebSocket for deterministic state verification.
+
+### Housing Validity Query (`query_housing`)
+- **Request**:
 ```json
 {
-  "type": "action_result",
-  "command_id": "cmd_01J6A8Z9B1234567890",
-  "action": "move_to",
-  "success": false,
-  "execution_time_ms": 50.0,
-  "failure_reason": "BLOCKED_BY_TERRAIN",
-  "details": "Player cannot navigate past obstruction"
+  "type": "query",
+  "query_id": "qry_01J6F555",
+  "query": "query_housing",
+  "tile_x": 125,
+  "tile_y": 80
+}
+```
+- **Response**:
+```json
+{
+  "type": "query_response",
+  "query_id": "qry_01J6F555",
+  "query": "query_housing",
+  "success": true,
+  "is_valid": true,
+  "failure_reason": null,
+  "assigned_npc": "Merchant",
+  "details": "Valid housing room suitable for NPCs"
+}
+```
+
+### Chest Contents Query (`query_chest`)
+- **Request**:
+```json
+{
+  "type": "query",
+  "query_id": "qry_01J6G444",
+  "query": "query_chest",
+  "chest_x": 130,
+  "chest_y": 85
+}
+```
+- **Response**:
+```json
+{
+  "type": "query_response",
+  "query_id": "qry_01J6G444",
+  "query": "query_chest",
+  "success": true,
+  "chest_x": 130,
+  "chest_y": 85,
+  "items": [
+    { "slot": 0, "item_id": 12, "name": "Iron Ore", "stack": 99 },
+    { "slot": 1, "item_id": 19, "name": "Gold Bar", "stack": 15 }
+  ],
+  "details": "Chest read successfully"
 }
 ```

@@ -1,7 +1,8 @@
 """WebSocket client for communicating with the TerrAgentBridge tModLoader mod.
 
 This module manages the connection lifecycle, protocol version negotiation,
-automatic reconnection with exponential backoff, and bidirectional message transmission.
+automatic reconnection with exponential backoff, bidirectional message transmission,
+and query-response cycles.
 """
 
 import asyncio
@@ -16,6 +17,7 @@ from websockets.protocol import State
 
 from terragent.config import BridgeConfig
 from terragent.schemas import (
+    ActionCommand,
     ActionResult,
     BridgeConnectionError,
     BridgeTimeoutError,
@@ -24,6 +26,10 @@ from terragent.schemas import (
     HandshakeResponse,
     MoveCommand,
     ProtocolVersionMismatchError,
+    QueryChestRequest,
+    QueryChestResponse,
+    QueryHousingRequest,
+    QueryHousingResponse,
 )
 
 logger = logging.getLogger(__name__)
@@ -193,14 +199,14 @@ class BridgeClient:
                 logger.warning(f"Connection lost during state stream: {exc}")
                 raise
 
-    async def send_command(self, command: MoveCommand) -> ActionResult | None:
+    async def send_command(self, command: ActionCommand | MoveCommand) -> ActionResult | None:
         """Send an action command to the bridge mod.
 
         Args:
-            command: The MoveCommand instance to transmit.
+            command: The ActionCommand instance to transmit.
 
         Returns:
-            ActionResult if returned by server, or None.
+            ActionResult if returned synchronously by server, or None.
 
         Raises:
             BridgeConnectionError: If sending fails or socket is closed.
@@ -215,6 +221,52 @@ class BridgeClient:
             raise BridgeConnectionError(
                 f"Failed to send command {command.command_id}: {exc}"
             ) from exc
+
+    async def query_housing(self, tile_x: int, tile_y: int) -> QueryHousingResponse:
+        """Query in-game housing validity at a specific room tile coordinate.
+
+        Args:
+            tile_x: Interior tile X coordinate.
+            tile_y: Interior tile Y coordinate.
+
+        Returns:
+            QueryHousingResponse: The verified housing status from the game engine.
+        """
+        if self.ws is None or self.ws.state != State.OPEN:
+            raise BridgeConnectionError("Cannot execute query: WebSocket is not connected")
+
+        req = QueryHousingRequest(tile_x=tile_x, tile_y=tile_y)
+        try:
+            await self.ws.send(req.model_dump_json())
+            raw_resp = await asyncio.wait_for(self.ws.recv(), timeout=self.config.timeout_seconds)
+            return QueryHousingResponse.model_validate(json.loads(raw_resp))
+        except TimeoutError as exc:
+            raise BridgeTimeoutError("Housing query timed out") from exc
+        except Exception as exc:
+            raise BridgeConnectionError(f"Housing query failed: {exc}") from exc
+
+    async def query_chest(self, chest_x: int, chest_y: int) -> QueryChestResponse:
+        """Query the contents of a chest at specific tile coordinates.
+
+        Args:
+            chest_x: Chest tile X coordinate.
+            chest_y: Chest tile Y coordinate.
+
+        Returns:
+            QueryChestResponse: Items currently residing in the chest.
+        """
+        if self.ws is None or self.ws.state != State.OPEN:
+            raise BridgeConnectionError("Cannot execute query: WebSocket is not connected")
+
+        req = QueryChestRequest(chest_x=chest_x, chest_y=chest_y)
+        try:
+            await self.ws.send(req.model_dump_json())
+            raw_resp = await asyncio.wait_for(self.ws.recv(), timeout=self.config.timeout_seconds)
+            return QueryChestResponse.model_validate(json.loads(raw_resp))
+        except TimeoutError as exc:
+            raise BridgeTimeoutError("Chest query timed out") from exc
+        except Exception as exc:
+            raise BridgeConnectionError(f"Chest query failed: {exc}") from exc
 
     async def disconnect(self) -> None:
         """Close active WebSocket connection cleanly."""

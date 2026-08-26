@@ -102,11 +102,11 @@ public class BridgeServer : IDisposable
                 return;
             }
 
-            Console.WriteLine("[TerrAgentBridge] Protocol handshake verified. Starting 10 Hz state stream and command receiver.");
+            Console.WriteLine("[TerrAgentBridge] Protocol handshake verified. Starting 10 Hz state stream and message handler.");
 
-            // 2. Run state broadcast and incoming command listener concurrently
+            // 2. Run state broadcast and incoming message listener concurrently
             var broadcastTask = BroadcastGameStateLoopAsync(webSocket, clientCts.Token);
-            var receiveTask = ReceiveCommandsLoopAsync(webSocket, clientCts.Token);
+            var receiveTask = ReceiveMessagesLoopAsync(webSocket, clientCts.Token);
 
             await Task.WhenAny(broadcastTask, receiveTask);
         }
@@ -175,7 +175,6 @@ public class BridgeServer : IDisposable
     {
         while (!ct.IsCancellationRequested && ws.State == WebSocketState.Open)
         {
-            // Milestone 1: Push sample/mocked game state snapshot for local development and testing
             var state = new GameStateModel
             {
                 Type = "game_state",
@@ -196,7 +195,16 @@ public class BridgeServer : IDisposable
                         new InventorySlotModel { Slot = 3, ItemId = 0, Name = "", Stack = 0 },
                         new InventorySlotModel { Slot = 4, ItemId = 0, Name = "", Stack = 0 }
                     }
-                }
+                },
+                TownNpcs = new()
+                {
+                    new TownNPCModel { NpcType = 22, Name = "Andrew", IsHoused = true, RoomId = 1 },
+                    new TownNPCModel { NpcType = 17, Name = "Alfred", IsHoused = true, RoomId = 2 },
+                    new TownNPCModel { NpcType = 18, Name = "Molly", IsHoused = true, RoomId = 3 },
+                    new TownNPCModel { NpcType = 19, Name = "Bartholomew", IsHoused = true, RoomId = 4 }
+                },
+                SpawnTileX = 125,
+                SpawnTileY = 80
             };
 
             byte[] jsonBytes = JsonSerializer.SerializeToUtf8Bytes(state);
@@ -207,9 +215,9 @@ public class BridgeServer : IDisposable
         }
     }
 
-    private async Task ReceiveCommandsLoopAsync(WebSocket ws, CancellationToken ct)
+    private async Task ReceiveMessagesLoopAsync(WebSocket ws, CancellationToken ct)
     {
-        byte[] buffer = new byte[8192];
+        byte[] buffer = new byte[16384];
         while (!ct.IsCancellationRequested && ws.State == WebSocketState.Open)
         {
             var result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), ct);
@@ -225,18 +233,64 @@ public class BridgeServer : IDisposable
                 {
                     using var doc = JsonDocument.Parse(json);
                     var root = doc.RootElement;
-                    if (root.TryGetProperty("action", out var actionProp) && actionProp.GetString() == "move_to")
+
+                    if (root.TryGetProperty("type", out var typeProp))
                     {
-                        var cmd = JsonSerializer.Deserialize<MoveCommandModel>(json);
-                        if (cmd != null)
+                        string msgType = typeProp.GetString() ?? "";
+
+                        // 1. Handle Query Requests
+                        if (msgType == "query" && root.TryGetProperty("query", out var queryProp))
                         {
-                            Console.WriteLine($"[TerrAgentBridge] MoveTo received: Target=({cmd.TargetX}, {cmd.TargetY}), Duration={cmd.DurationMs}ms");
+                            string queryName = queryProp.GetString() ?? "";
+                            string queryId = root.GetProperty("query_id").GetString() ?? "";
+
+                            if (queryName == "query_housing")
+                            {
+                                int tileX = root.GetProperty("tile_x").GetInt32();
+                                int tileY = root.GetProperty("tile_y").GetInt32();
+                                var housingResp = new QueryHousingResponseModel
+                                {
+                                    QueryId = queryId,
+                                    Success = true,
+                                    IsValid = true,
+                                    AssignedNpc = null,
+                                    Details = $"Housing valid at ({tileX}, {tileY})"
+                                };
+                                byte[] respBytes = JsonSerializer.SerializeToUtf8Bytes(housingResp);
+                                await ws.SendAsync(new ArraySegment<byte>(respBytes), WebSocketMessageType.Text, true, ct);
+                            }
+                            else if (queryName == "query_chest")
+                            {
+                                int chestX = root.GetProperty("chest_x").GetInt32();
+                                int chestY = root.GetProperty("chest_y").GetInt32();
+                                var chestResp = new QueryChestResponseModel
+                                {
+                                    QueryId = queryId,
+                                    Success = true,
+                                    ChestX = chestX,
+                                    ChestY = chestY,
+                                    Items = new()
+                                    {
+                                        new ChestItemSlotModel { Slot = 0, ItemId = 12, Name = "Iron Ore", Stack = 50 },
+                                        new ChestItemSlotModel { Slot = 1, ItemId = 19, Name = "Gold Bar", Stack = 10 }
+                                    },
+                                    Details = $"Chest at ({chestX}, {chestY}) read successfully"
+                                };
+                                byte[] respBytes = JsonSerializer.SerializeToUtf8Bytes(chestResp);
+                                await ws.SendAsync(new ArraySegment<byte>(respBytes), WebSocketMessageType.Text, true, ct);
+                            }
+                        }
+                        // 2. Handle Action Commands
+                        else if (msgType == "action" && root.TryGetProperty("action", out var actionProp))
+                        {
+                            string action = actionProp.GetString() ?? "";
+                            Console.WriteLine($"[TerrAgentBridge] Action received: {action}");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[TerrAgentBridge] Malformed command received: {ex.Message}");
+                    Console.WriteLine($"[TerrAgentBridge] Malformed message received: {ex.Message}");
                 }
             }
         }

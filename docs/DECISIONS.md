@@ -39,3 +39,27 @@
 - **Context**: Specifications outline complex systems for later milestones (bosses, housing, chests, GOAP, LLM budget limiter). Implementing placeholders or half-baked versions prematurely pollutes the codebase and violates incremental engineering.
 - **Decision**: In M1, implement strictly the minimal viable components (connection, version handshake, M1 player schema, movement command, basic reflex rule, and fake-bridge test). Omit all future milestone code until their respective milestones.
 - **Consequences**: Keeps the codebase clean, tested, and maintainable.
+
+---
+
+## ADR 006: SQLite for Persistent Memory and Chest Indexing
+- **Status**: Accepted (2026-08-26)
+- **Context**: The agent needs to track housing rooms, assigned NPCs, chest locations, and chest item contents across sessions and trip cycles without losing items or repeating room builds.
+- **Decision**: Use an embedded SQLite database (`sqlite3` standard library) managed via a dedicated `MemoryStore` / `Database` layer.
+- **Consequences**: Zero external database dependencies, instant transactions, persistent state across restarts.
+
+---
+
+## ADR 007: Parameterized Grid-Relative Building Templates for Housing
+- **Status**: Accepted (2026-08-26)
+- **Context**: Terraria world seeds and base spawn locations are random. Hardcoding absolute tile coordinates is strictly prohibited.
+- **Decision**: Define building templates (e.g. 10x6 interior NPC room, bed bedroom) using relative grid coordinates `(dx, dy, block_type, wall_type, furniture_type)` evaluated from a dynamic base origin.
+- **Consequences**: Robust, reusable structure placement that adapts to any world spawn terrain.
+
+---
+
+## ADR 008: Explicit Query-Response Cycle for In-Game Housing & Chests
+- **Status**: Accepted (2026-08-26)
+- **Context**: In-game housing validity involves complex game rules (corruption proximity, tile integrity, lighting, solid surfaces). Client-side guessing leads to desync.
+- **Decision**: Expose programmatic query endpoints (`query_housing`, `query_chest`) on the bridge WebSocket. The agent queries the bridge and verifies validity with the game engine before marking a room as valid or assigning NPCs.
+- **Consequences**: 100% accurate housing verification conforming to Terraria's native engine checks.
